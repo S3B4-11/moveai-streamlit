@@ -4,6 +4,7 @@ import json
 import os
 import numpy as np
 from geometry import features, SCHEMA
+from score_calibration import calibrated_score
 
 
 def forest_probability(model,x):
@@ -27,12 +28,22 @@ def predict_model(coords,exercise,root=None,view=None,target=None):
     out_of_domain=float(np.mean((x<low)|(x>high)))>.25
     # Evaluar el sensor/cámara propio exige datos de cámara etiquetados de varias personas.
     camera_validated=bool(m.get('camera_validated',False) and any(p['passed'] and p['view']==view and abs(p['target']-float(target or 0))<1 for p in m.get('camera_profiles',[])))
-    usable=bool(m.get('accepted',False) and camera_validated and not out_of_domain)
-    return {'available':True,'usable':usable,'p_error':prob,'error':prob>=m.get('threshold_by_source',{}).get('camera',m['threshold']),
+    accepted=bool(m.get('accepted',False))
+    preliminary_available=bool(accepted and not out_of_domain)
+    usable=bool(preliminary_available and camera_validated)
+    threshold=float(m.get('threshold_by_source',{}).get('camera',m['threshold']))
+    reason=('Detector validado con videos propios.' if usable else
+            'Predicción preliminar: el detector todavía no está validado con videos propios de cámara.')
+    if not accepted:reason='El detector no superó los criterios de evaluación del entrenamiento.'
+    elif out_of_domain:reason='El movimiento contiene características fuera del rango de entrenamiento; el detector no emite una decisión.'
+    calibration=calibrated_score(m,prob,p.parent/'calibracion_score.json')
+    return {'available':True,'usable':usable,'preliminary_available':preliminary_available,
+            'p_error':prob,'threshold':threshold,'error':prob>=threshold,
+            'calibration':calibration,
+            # Esta banda es una regla operativa de abstención, no un intervalo de confianza.
+            'near_threshold':bool(abs(prob-threshold)<.05),
             'out_of_domain':out_of_domain,'camera_validated':camera_validated,
-            'metrics':m['metrics'],'model_version':m['version'],'reason':
-            'Detector validado con videos propios.' if usable else
-            'El detector se mantiene como comparación hasta validarlo con videos propios de varias personas.'}
+            'metrics':m['metrics'],'model_version':m['version'],'reason':reason}
 
 
 def predict_subtypes(coords,exercise,root=None,target=None):

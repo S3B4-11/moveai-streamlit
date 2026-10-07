@@ -63,13 +63,15 @@ with controls:
     views = ['perfil', 'frente']
     view = st.radio('Vista de la cámara', views, index=views.index(default_view),
                     key='view_' + exercise, horizontal=True)
-    side = st.radio('Brazo activo / pierna delantera en zancada', ['derecha', 'izquierda'],
-                    key='side_' + exercise, horizontal=True)
+    side = st.radio('Brazo activo / pierna delantera en zancada', ['automatica', 'derecha', 'izquierda'],
+                    format_func=lambda x: 'Automático' if x == 'automatica' else x.capitalize(),
+                    key='side_v2_' + exercise, horizontal=True)
     default_target = {'squat': 80, 'inline_lunge': 85, 'shoulder_abduction': 90, 'elbow_flexion': 120}[exercise]
     target = st.slider('Recorrido objetivo (grados)', 40, 170, default_target, 5, key='target_' + exercise)
     st.caption('El objetivo depende del ejercicio que quieres hacer. Elevación lateral: 90° por defecto. '
-               'Para hombro usa vista frontal; para medir rodilla o codo, perfil. '
-               'Los ángulos se estiman desde el video.')
+               'Selecciona la vista real de tu video. El modelo usa coordenadas 3D estimadas. '
+               'Las medidas 2D de rodilla y codo necesitan perfil; una medida no disponible '
+               'no oculta la predicción si el modelo tiene datos suficientes.')
     upload = st.file_uploader('Video de hasta 60 segundos', type=['mp4', 'mov', 'avi', 'webm', 'm4v'])
     try:
         workspace.set_input(upload.getvalue() if upload else None,
@@ -96,17 +98,49 @@ with controls:
 with output:
     result = workspace.result
     if result:
-        st.markdown(markdown_result(result))
+        color = result.get('color', 'amarillo')
+        banner = {'verde': st.success, 'rojo': st.error, 'amarillo': st.warning}[color]
+        banner(color.upper() + ' · ' + result['title'])
+        if result.get('calibrated_ready'):
+            calibration = result['learned']['calibration']
+            score = calibration['p_correct']
+            # Truncar evita mostrar 75,0% con amarillo cuando el valor real es 74,99%.
+            display_percent = int(1000 * score) / 10
+            st.metric('Probabilidad estimada de ejecución correcta', f'{display_percent:.1f}%')
+            st.progress(float(score))
+            st.caption(f"Verde desde {calibration['green_threshold']:.0%} correcta · "
+                       f"Rojo desde {calibration['red_threshold']:.0%} incorrecta. "
+                       'Porcentaje calibrado con datos de referencia; evaluación con tus videos pendiente.')
+        st.markdown(markdown_result(result, include_title=False))
         if result['sample'].get('thumbnail') is not None:
             st.image(result['sample']['thumbnail'], caption='Fotograma de referencia', use_container_width=True)
-        with st.expander('Comparación con el detector aprendido'):
+        with st.expander('Por qué se dio este resultado'):
             learned = result['learned']
             st.write(learned.get('reason', 'Sin detector disponible.'))
-            if learned.get('available'):
-                st.write('Señal del detector: ' + ('posible ejecución incorrecta' if learned['error'] else 'posible ejecución correcta'))
-                st.caption('Esta señal no certifica la técnica ni es un porcentaje de seguridad. '
-                           'Si no hay validación de cámara, no decide el resultado principal.')
-                st.json({k: v for k, v in learned.items() if k not in ['p_error', 'reviewed_subtypes']})
+            if result.get('prediction_ready'):
+                if result.get('calibrated_ready'):
+                    audit = learned['calibration']['reference_audit']
+                    st.write(f"En la comprobación posterior de referencia, {audit['green_correct']} de "
+                             f"{audit['green_samples']} verdes fueron correctos ({audit['green_precision']:.1%}).")
+                    st.caption('Ese acierto se refiere al score en los datasets, excluye los amarillos y '
+                               'no representa una nueva prueba independiente ni el acierto con cámaras. '
+                               'El porcentaje no estima seguridad o riesgo de lesión.')
+                else:
+                    st.write('Señal del detector sin calibrar: ' + ('posible ejecución incorrecta' if learned['error'] else 'posible ejecución correcta'))
+            st.json({'quality':result.get('quality'), 'decision_source':result.get('decision_source'),
+                     'decision_reason':result.get('decision_reason'), 'color':color,
+                     'model':{k:v for k,v in learned.items() if k not in ['p_error','reviewed_subtypes']}})
+        diagnostic = {'title':result['title'], 'exercise':result['exercise'],
+                      'view':result['sample']['view'], 'side':result['sample']['side'],
+                      'target':result['sample']['target'], 'quality':result.get('quality'),
+                      'decision_source':result.get('decision_source'), 'color':color,
+                      'calibrated_ready':result.get('calibrated_ready'),
+                      'decision_reason':result.get('decision_reason'), 'rules':result['rules'],
+                      'learned':result['learned']}
+        import json
+        st.download_button('Descargar diagnóstico de esta repetición',
+                           json.dumps(diagnostic, ensure_ascii=False, indent=2),
+                           file_name='moveai_diagnostico.json', mime='application/json', on_click='ignore')
     else:
         st.info('El resultado aparecerá aquí después de analizar el video.')
     with st.expander('Qué puede observar MOVEAI'):
@@ -158,7 +192,8 @@ with review_tab:
 with model_tab:
     st.dataframe(model_summary(Path(__file__).parent / 'modelos_rapidos'), hide_index=True,
                  use_container_width=True)
-    st.caption('Resultados en datasets de referencia con separación de personas. '
-               'No representan el acierto con tus videos. Cada vista y objetivo necesita evaluación con cámara.')
+    st.caption('Las métricas binarias usan el corte del entrenamiento anterior. '
+               'Verdes acertados y amarillos corresponden al semáforo calibrado, comprobado después '
+               'sobre predicciones de referencia. No son una prueba independiente ni representan el acierto con tus videos.')
 
 st.caption('MOVEAI ofrece orientación sobre los criterios observados. No predice lesiones.')

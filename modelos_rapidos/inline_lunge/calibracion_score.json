@@ -1,0 +1,164 @@
+{
+  "version": "reference_sigmoid_v1",
+  "created": "2026-10-07T04:17:11.240978+00:00",
+  "model_fingerprint": "64515ac9582de64d851770550b04b5b8b3eacf8182962e7e402851824a59466d",
+  "model_sha256": "e5a2dd2e9d34a80bd3be95a991188fb591f4e93cccb309b7b053f5e3d6989944",
+  "feature_schema": "angles_v4",
+  "scope": "reference",
+  "method": "sigmoid_on_raw_forest_score",
+  "coefficient": 5.575661839685683,
+  "intercept": -2.956231923767964,
+  "green_threshold": 0.75,
+  "red_threshold": 0.75,
+  "green_supported": true,
+  "evaluation": "Comprobación posterior por persona sobre scores OOF guardados; no es CV completamente anidada del calibrador y modelo base ni prueba independiente de cámara.",
+  "audit": {
+    "samples": 275,
+    "subjects": 14,
+    "green_samples": 84,
+    "green_correct": 63,
+    "green_precision": 0.75,
+    "green_subjects": 11,
+    "red_samples": 101,
+    "red_incorrect": 86,
+    "red_precision": 0.8514851485148515,
+    "yellow_samples": 90,
+    "colored_coverage": 0.6727272727272727,
+    "brier_raw": 0.17007917481103427,
+    "brier_calibrated": 0.18065349762719043,
+    "reference_incorrect_prevalence": 0.5309090909090909,
+    "camera_samples": 0,
+    "camera_subjects": 0,
+    "sources": {
+      "rehab246": {
+        "samples": 173,
+        "subjects": 8,
+        "green_samples": 56,
+        "green_correct": 40,
+        "green_precision": 0.7142857142857143,
+        "green_subjects": 6,
+        "red_samples": 55,
+        "red_incorrect": 52,
+        "red_precision": 0.9454545454545454,
+        "yellow_samples": 62,
+        "colored_coverage": 0.6416184971098265
+      },
+      "uiprmd": {
+        "samples": 102,
+        "subjects": 6,
+        "green_samples": 28,
+        "green_correct": 23,
+        "green_precision": 0.8214285714285714,
+        "green_subjects": 5,
+        "red_samples": 46,
+        "red_incorrect": 34,
+        "red_precision": 0.7391304347826086,
+        "yellow_samples": 28,
+        "colored_coverage": 0.7254901960784313
+      }
+    },
+    "folds": [
+      {
+        "samples": 59,
+        "subjects": 3,
+        "green_samples": 25,
+        "green_correct": 16,
+        "green_precision": 0.64,
+        "green_subjects": 3,
+        "red_samples": 14,
+        "red_incorrect": 14,
+        "red_precision": 1.0,
+        "yellow_samples": 20,
+        "colored_coverage": 0.6610169491525424,
+        "fold": 1,
+        "test_subjects": [
+          "rehab246:P03",
+          "rehab246:P04",
+          "uiprmd:S06"
+        ]
+      },
+      {
+        "samples": 58,
+        "subjects": 3,
+        "green_samples": 13,
+        "green_correct": 12,
+        "green_precision": 0.9230769230769231,
+        "green_subjects": 2,
+        "red_samples": 34,
+        "red_incorrect": 23,
+        "red_precision": 0.6764705882352942,
+        "yellow_samples": 11,
+        "colored_coverage": 0.8103448275862069,
+        "fold": 2,
+        "test_subjects": [
+          "rehab246:P09",
+          "uiprmd:S05",
+          "uiprmd:S08"
+        ]
+      },
+      {
+        "samples": 45,
+        "subjects": 2,
+        "green_samples": 19,
+        "green_correct": 12,
+        "green_precision": 0.631578947368421,
+        "green_subjects": 2,
+        "red_samples": 8,
+        "red_incorrect": 7,
+        "red_precision": 0.875,
+        "yellow_samples": 18,
+        "colored_coverage": 0.6,
+        "fold": 3,
+        "test_subjects": [
+          "rehab246:P05",
+          "rehab246:P07"
+        ]
+      },
+      {
+        "samples": 55,
+        "subjects": 3,
+        "green_samples": 21,
+        "green_correct": 17,
+        "green_precision": 0.8095238095238095,
+        "green_subjects": 3,
+        "red_samples": 17,
+        "red_incorrect": 16,
+        "red_precision": 0.9411764705882353,
+        "yellow_samples": 17,
+        "colored_coverage": 0.6909090909090909,
+        "fold": 4,
+        "test_subjects": [
+          "rehab246:P08",
+          "uiprmd:S01",
+          "uiprmd:S09"
+        ]
+      },
+      {
+        "samples": 58,
+        "subjects": 3,
+        "green_samples": 6,
+        "green_correct": 6,
+        "green_precision": 1.0,
+        "green_subjects": 1,
+        "red_samples": 28,
+        "red_incorrect": 26,
+        "red_precision": 0.9285714285714286,
+        "yellow_samples": 24,
+        "colored_coverage": 0.5862068965517241,
+        "fold": 5,
+        "test_subjects": [
+          "rehab246:P02",
+          "rehab246:P06",
+          "uiprmd:S04"
+        ]
+      }
+    ]
+  },
+  "oof_sha256": "f7aff0e2c9286022d23e8f8c149e1eab3cb6088faf56190aad5a8f261a066dc7",
+  "limitations": [
+    "La comprobación posterior reutiliza scores de modelos OOF y no es una nueva evaluación independiente.",
+    "La prevalencia y los sensores de referencia pueden diferir de los videos de la app.",
+    "El acierto de los verdes no es la accuracy global: se excluyen los amarillos.",
+    "La auditoría del score no incluye los controles de visibilidad, dominio o medidas 2D de la app."
+  ]
+}

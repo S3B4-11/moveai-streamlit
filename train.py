@@ -90,6 +90,9 @@ def train_exercise(items,exercise,out_root):
     if p.exists():
         old=json.loads(p.read_text())
         if old.get('fingerprint')==fingerprint:
+            if (out/'predicciones_oof.npz').exists():
+                from calibrate_scores import calibrate_exercise
+                calibrate_exercise(out)
             print(exercise,': sin cambios; se reutiliza el modelo.');return old
     x=np.stack([features(item['coords'],exercise,item['metadata'].get('target')) for item in items]);y=np.array([a['error'] for a in items])
     groups=np.array([a['subject'] for a in items]);sources=np.array([a['source'] for a in items])
@@ -150,6 +153,9 @@ def train_exercise(items,exercise,out_root):
         (history/f'{json.loads(p.read_text())["fingerprint"][:16]}.json').write_bytes(p.read_bytes())
     tmp=p.with_suffix('.tmp');tmp.write_text(json.dumps(metadata,ensure_ascii=False));os.replace(tmp,p)
     np.savez_compressed(out/'predicciones_oof.npz',y=y,prob=probs,threshold=cuts,subject=groups,source=sources)
+    # Recalibrar con los scores del modelo nuevo. No copiar una calibración de otros pesos.
+    from calibrate_scores import calibrate_exercise
+    calibrate_exercise(out)
     # Separación explícita: nunca redistribuir una clase vacía ni evaluar reglas como ground truth.
     audit={'binary':{'correct':int(np.sum(y==0)),'incorrect':int(np.sum(y==1))},
            'subjects':len(np.unique(groups)),'subtypes':{}}

@@ -95,13 +95,16 @@ def rule_assessment(image_coords, visibility, exercise, view='perfil', side='der
         evaluable=visible>=0.8 and view==plane
         value=float(np.percentile(series[valid],90)) if valid.any() else None
         status='no_evaluable'
+        reason=''
+        if visible<.8:reason=f'Articulaciones visibles en {visible:.0%} de los fotogramas; se requiere 80%.'
+        elif view!=plane:reason=f'Esta medida 2D requiere vista de {plane}; la configuración indica {view}.'
         if evaluable and value is not None:
             good=value>=reference if lower else value<=reference
             borderline=value>=reference-tolerance if lower else value<=reference+tolerance
             status='en_rango' if good else 'limite' if borderline else 'fuera_de_rango'
         checks.append({'key':key,'name':name,'value':None if value is None else round(value,2),
                        'reference':reference,'direction':'>=' if lower else '<=',
-                       'status':status,'view':plane,'visibility':visible,'advice':advice})
+                       'status':status,'view':plane,'visibility':visible,'advice':advice,'reason':reason})
     if exercise in ('squat','inline_lunge'):
         kl=180-angle(c[:,23],c[:,25],c[:,27]);kr=180-angle(c[:,24],c[:,26],c[:,28])
         series=(kl+kr)/2 if exercise=='squat' else (kr if side=='derecha' else kl)
@@ -150,6 +153,9 @@ def rule_assessment(image_coords, visibility, exercise, view='perfil', side='der
     movement=float(q[1]-q[0])
     primary=checks[0]
     quality=bool(primary['status']!='no_evaluable' and movement>=20)
+    reason=primary['reason']
+    if not reason and movement<20:
+        reason=f'El recorrido proyectado varía solo {movement:.1f}°. Puede faltar movimiento, estar elegido otro lado o verse el movimiento fuera del plano de la cámara.'
     return {'checks':checks,'movement':round(movement,1),'evaluable':quality,
-            'reason':'' if quality else 'Se necesita una repetición completa y articulaciones visibles en la vista indicada.',
+            'reason':'' if quality else reason,
             'target':target,'view':view,'side':side}

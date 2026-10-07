@@ -55,9 +55,16 @@ def model_summary(root):
             continue
         model = json.loads(path.read_text())
         metrics = model['metrics']
+        from score_calibration import calibrated_score
+        calibration = calibrated_score(model, .5, path.parent / 'calibracion_score.json')
+        audit = calibration.get('reference_audit', {})
         rows.append({'Ejercicio': label,
                      'Accuracy balanceada': f"{100 * metrics['balanced_accuracy']:.1f}%",
                      'Errores detectados': f"{100 * metrics['sensitivity']:.1f}%",
                      'Correctas sin alarma': f"{100 * metrics['specificity']:.1f}%",
+                     'Verdes acertados (referencia)': (f"{audit['green_correct']}/{audit['green_samples']} "
+                                                       f"({audit['green_precision']:.1%})"
+                                                       if audit.get('green_precision') is not None else 'Sin calibración'),
+                     'Amarillos (referencia)': audit.get('yellow_samples'),
                      'Cámara validada': 'Sí' if model.get('camera_validated') else 'Pendiente'})
     return rows
