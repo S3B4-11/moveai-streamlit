@@ -1,0 +1,24 @@
+{
+  "binary": {
+    "correct": 220,
+    "incorrect": 151
+  },
+  "subjects": 19,
+  "subtypes": {
+    "rango_incompleto": {
+      "reviewed_positive_samples": 0,
+      "positive_subjects": 0,
+      "unknown_samples": 371
+    },
+    "rodilla_hacia_dentro": {
+      "reviewed_positive_samples": 0,
+      "positive_subjects": 0,
+      "unknown_samples": 371
+    },
+    "asimetria": {
+      "reviewed_positive_samples": 0,
+      "positive_subjects": 0,
+      "unknown_samples": 371
+    }
+  }
+}

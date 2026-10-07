@@ -1,0 +1,29 @@
+{
+  "binary": {
+    "correct": 590,
+    "incorrect": 221
+  },
+  "subjects": 43,
+  "subtypes": {
+    "rango_incompleto": {
+      "reviewed_positive_samples": 0,
+      "positive_subjects": 0,
+      "unknown_samples": 811
+    },
+    "compensacion_tronco": {
+      "reviewed_positive_samples": 0,
+      "positive_subjects": 0,
+      "unknown_samples": 811
+    },
+    "elevacion_hombro": {
+      "reviewed_positive_samples": 0,
+      "positive_subjects": 0,
+      "unknown_samples": 811
+    },
+    "codo_flexionado": {
+      "reviewed_positive_samples": 0,
+      "positive_subjects": 0,
+      "unknown_samples": 811
+    }
+  }
+}

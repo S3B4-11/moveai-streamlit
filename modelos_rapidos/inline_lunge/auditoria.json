@@ -1,0 +1,24 @@
+{
+  "binary": {
+    "correct": 129,
+    "incorrect": 146
+  },
+  "subjects": 14,
+  "subtypes": {
+    "rango_incompleto": {
+      "reviewed_positive_samples": 0,
+      "positive_subjects": 0,
+      "unknown_samples": 275
+    },
+    "rodilla_hacia_dentro": {
+      "reviewed_positive_samples": 0,
+      "positive_subjects": 0,
+      "unknown_samples": 275
+    },
+    "compensacion_tronco": {
+      "reviewed_positive_samples": 0,
+      "positive_subjects": 0,
+      "unknown_samples": 275
+    }
+  }
+}
