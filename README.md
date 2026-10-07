@@ -1,72 +1,43 @@
-# MOVEAI en Streamlit
+# MOVEAI RGB 4
 
-Este paquete usa los cuatro modelos del ZIP MOVEAI_privado_actualizado que exportaste en Colab. No vuelve a entrenar ni descarga los datasets al abrir la app. Incluye el detector de pose para evitar una descarga al arrancar. La calibración del semáforo ya está calculada a partir de tus predicciones de validación guardadas en Drive.
+Revisión de recorrido y compensaciones visibles, por repetición. Extremidad automática o manual y meta ajustable. Los clasificadores anteriores de sensores Kinect no se usan en la evaluación de cámara.
 
-## GitHub y Streamlit Cloud
+## Publicar en Streamlit Community Cloud
 
-1. Descomprime este ZIP. Crea un repositorio nuevo en GitHub, por ejemplo moveai-streamlit.
-2. Sube el CONTENIDO de la carpeta a la raíz del repositorio: streamlit_app.py, los módulos .py, requirements.txt, packages.txt, assets/, modelos_rapidos/ y .streamlit/config.toml. Sube las carpetas completas. No subas el ZIP como único archivo, videos, revisiones ni contraseñas.
-3. En https://share.streamlit.io elige Create app → Yup, I have an app.
-4. Selecciona tu repositorio, la rama main y el archivo streamlit_app.py.
-5. En Advanced settings selecciona Python 3.12 y añade en Secrets:
+1. Extrae `MOVEAI_Streamlit.zip`. Sustituye el contenido anterior del repositorio por esta carpeta completa. El archivo `streamlit_app.py` debe estar en la raíz, junto a `requirements.txt`, `packages.txt`, `.streamlit/config.toml`, `assets/` y `camera_modelos/` si existe. Elimina los archivos antiguos antes de subir; no mezcles versiones.
+2. En Streamlit crea una app con ese repositorio y `streamlit_app.py` como entrada. En Advanced settings selecciona **Python 3.12**. Cambiar la versión de Python de una app existente exige volver a desplegarla; conserva la URL y Secrets antes de hacerlo.
+3. En Settings → Secrets configura `app_password = "tu-clave-de-al-menos-8-caracteres"`. Comparte esa clave con las personas del proyecto. No subas Secrets a GitHub.
+4. Prueba un clip completo, de hasta 60 s y 150 MB. Para comprobar un caso dudoso descarga el diagnóstico y revisa la repetición y sus articulaciones anotadas.
 
-```toml
-app_password = "TU_CONTRASENA_DE_AL_MENOS_8_CARACTERES"
-```
+## Resultado
 
-6. Guarda y despliega la app. Entra usando esa contraseña y comparte el enlace con el equipo.
+- Verde: cumplimiento de los criterios observables, o ≥75% de correcta de un detector RGB aprobado sin una compensación clara contradictoria.
+- Rojo: criterio medido fuera del margen acordado, o ≥75% de incorrecta de un detector RGB aprobado cuando las medidas no lo contradicen.
+- Amarillo: toma incompleta, oclusión, cercanía al límite, incertidumbre o conflicto. No significa técnica incorrecta.
+- **Cumplimiento de criterios** es una puntuación de medidas, no una probabilidad. Las metas son ajustables a la variante del ejercicio. No hay una certificación de toda la técnica ni un predictor de lesiones.
 
-Si el archivo streamlit_app.py quedó dentro de una carpeta en GitHub, usa esa ruta completa como entrada. Es más sencillo subir el contenido directamente a la raíz. En un repositorio existente, sustituye también los módulos y requirements: no mezcles las dependencias antiguas de TensorFlow con estas.
+La app guarda el archivo temporal sólo en su sesión. Las revisiones se exportan como coordenadas y etiquetas humanas; descárgalas para conservarlas. No se aprende automáticamente de la propia predicción. Usa siempre el mismo alias por persona, y revisa la etiqueta con alguien que conozca la técnica.
 
-## Prueba inicial
+## Datos y entrenamiento
 
-Graba una repetición completa con buena luz y cámara fija. Para hombro elige frente; para medir recorrido de rodilla o codo, perfil. Selecciona el lado activo y el objetivo del ejercicio. Sube el video, pulsa Analizar y revisa medidas, criterios sin evaluar y sugerencias. Compara una repetición completa y una de recorrido claramente reducido bajo supervisión; MOVEAI debería detectar esa diferencia cuando las articulaciones sean visibles. Una diferencia entre la app y el revisor se conserva como error para evaluar.
+El Colab incluido descarga automáticamente los videos de curl y sentadilla del dataset **A Multi-View Raw Video Dataset of Seven Fitness Exercises with Good/Bad Form Labels**, Duddela Sai Prashanth et al., Mendeley Data V3 (2026), DOI https://doi.org/10.17632/kgbb3yn47p.3, licencia [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Se conserva la atribución, se rechazan videos idénticos con etiquetas contradictorias y todas las vistas de una persona se mantienen en el mismo fold. Son etiquetas de forma revisadas por los autores; no se asume validación clínica.
 
-La app muestra VERDE y «Técnica clasificada como correcta» si la probabilidad estimada de correcta alcanza 75%, hay movimiento, articulaciones visibles, características dentro del rango de entrenamiento y ninguna desviación o medida cercana al límite. ROJO aparece con una desviación observada o con probabilidad estimada de incorrecta de al menos 75%. AMARILLO indica que falta calidad, evidencia o confianza suficiente. Un criterio 2D no disponible por la vista no oculta la clasificación 3D si los datos del modelo son suficientes. Si falta una calibración válida, la señal anterior puede aparecer en amarillo, sin un porcentaje.
+El press de hombro de ese dataset **no** se usa como elevación lateral. Hombro y zancada conservan los criterios observables hasta disponer de suficientes revisiones RGB de ambos tipos, de al menos seis personas. Para aprender de videos propios exporta revisiones desde la app e impórtalas en el Colab. Se requieren al menos veinte clips y seis personas, con ambas clases; repetir clips no añade personas nuevas.
 
-La probabilidad usa una transformación sigmoide ajustada a los scores OOF, con prevalencia de los datasets de referencia. Los cortes del semáforo reemplazan los cortes anteriores de detección para la decisión coloreada; las métricas binarias de modelo.json siguen siendo las del entrenamiento anterior. No se modificaron los árboles ni se reentrenaron los modelos. La calibración no mejora necesariamente Brier o AUC: su ajuste se audita, no se asume.
+La validación externa por sujeto usa cinco folds. La selección y calibración usan tres repeticiones de tres folds internos, separados por sujeto. La persona 1 del dataset se reserva para depurar videos y se excluye de los resultados externos. Se calibra la media de scores fuera de muestra, del mismo tipo que la media exportada para inferencia. No se ajusta el umbral sobre los sujetos de prueba. Cada `camera_modelos/<ejercicio>/metricas.json` incluye sensibilidad, especificidad, AUC y precisión real del verde; `approved` determina si participa en la app. Un detector que no pasa el criterio permanece desactivado.
 
-Comprobación posterior del score, ajustando el calibrador sin usar etiquetas del fold de personas evaluado:
+Resultados de esta entrega, sobre clips con lectura suficiente: sentadilla, 100 videos de 24 personas, accuracy balanceada 0.750, sensibilidad de error 0.800, especificidad 0.700. El semáforo completo emitió 19 verdes (15 correctos), 15 rojos (13 incorrectos) y 66 amarillos. El verde puede venir del detector ≥75% o de criterios observables cumplidos cuando el detector es incierto y se inclina por correcta; no son la misma medida. Si el detector se inclina por incorrecta, las medidas positivas no fuerzan verde. Estos resultados son de desarrollo en ese dataset, no una garantía en toda cámara. El criterio de activación para este piloto privado exige al menos 15 verdes distribuidos entre 10 personas, además de precision verde ≥0.75 y las métricas generales de detección; varias vistas de una persona no son pruebas independientes. Codo: 99 videos de 24 personas, accuracy balanceada 0.626; detector desactivado. Codo, elevación lateral y zancada muestran sólo criterios observables. No se presenta una probabilidad aprendida para esos ejercicios.
 
-| Ejercicio | Verdes correctos / verdes | Acierto entre verdes | Amarillos / total |
-|---|---:|---:|---:|
-| Sentadilla | 126 / 144 | 87,5% | 165 / 371 |
-| Zancada | 63 / 84 | 75,0% | 90 / 275 |
-| Hombro | 476 / 509 | 93,5% | 184 / 811 |
-| Codo | 413 / 437 | 94,5% | 36 / 520 |
-
-Estos números son precisión de los verdes del score, excluyen amarillos y no incluyen los controles de visibilidad, dominio o criterios 2D aplicados por la app. No son accuracy global ni una nueva prueba independiente: los modelos base que generaron scores de otros folds pueden haber visto etiquetas del fold evaluado. No es una CV completamente anidada del modelo base y calibrador. Las variaciones por fuente y fold, incluidos resultados inferiores al promedio, se conservan en calibracion_score.json. Zancada tiene solo 84 verdes en la comprobación y su acierto es 71,4% en REHAB246 y 82,1% en UI-PRMD; es el ejercicio menos consistente.
-
-Las medidas observables se muestran aparte y una desviación medida tiene prioridad. Los cuatro modelos todavía conservan camera_validated=false: habilitar verde no valida el acierto con cámaras. La probabilidad corresponde a referencia, no estima seguridad ni lesiones. Los clips estáticos, las articulaciones ocultas y los datos fuera del rango del modelo generan un motivo específico de amarillo. El botón de diagnóstico descarga esos motivos, el color, la calidad de la secuencia y el resultado del detector, sin video original.
-
-El lado Automático escoge la extremidad con más movimiento estimado en 3D. Puedes seleccionarlo manualmente si el ejercicio lo requiere. No se verifica toda la técnica ni se estima una lesión futura.
-
-## Revisiones y siguiente entrenamiento
-
-El formulario requiere revisión humana y permiso. Usa un alias estable por persona. Los errores admiten varias etiquetas; no inventes subtipos para los que no exista revisión. Una predicción no es una etiqueta real.
-
-Las revisiones quedan separadas por sesión. Descarga moveai_videos_revisados.zip después de guardar; contiene coordenadas y etiquetas, no videos originales. Conserva cada paquete, porque cerrar la sesión o reiniciar el servidor puede borrar los datos locales. Los modelos incluidos en GitHub permanecen; los datos nuevos no se suben automáticamente a GitHub o Drive.
-
-Importa los paquetes en el Colab mediante IMPORTAR_REVISIONES_ZIP y ejecuta el entrenamiento con ACTUALIZAR_MODELOS=True. Para varios paquetes puedes importar cada uno antes de entrenar. Reemplaza luego modelos_rapidos/ en GitHub con los nuevos archivos. La app no aprende automáticamente después de pulsar Guardar. El train.py de este paquete recalcula el calibrador después de exportar un modelo. Si usas un Colab con un train.py anterior, ejecuta calibrate_scores.py sobre la carpeta exportada. Una calibración de otros pesos se rechaza y nunca habilita verde.
-
-## Reproducir la calibración sin entrenar
-
-Con requirements_training.txt instalado, ejecuta:
-
-```bash
-python calibrate_scores.py --models modelos_rapidos
-python -m unittest discover -s tests -v
-```
-
-Se incluyen predicciones_oof.npz, sin coordenadas ni videos, para reproducir esta comprobación. calibracion_score.json contiene los parámetros, hashes de vinculación al modelo y auditorías; evaluacion_semaforo.npz conserva los scores comprobados por fold. Streamlit solo necesita modelo.json, calibracion_score.json y los módulos de inferencia. No necesita scikit-learn al iniciar.
+La extracción usa **MediaPipe Pose Landmarker Full**. Las características incluyen las trayectorias de inicio, pico y retorno alineadas por repetición, además de medidas y velocidad. La extracción se conserva en Drive. Cambiar criterios o probar nuevos clasificadores reutiliza las coordenadas; no obliga a repetir la extracción ni el entrenamiento LSTM. El ZIP opcional `MOVEAI_RGB_cache.zip` contiene las poses públicas ya extraídas: impórtalo con `IMPORTAR_POSES_GUARDADAS=True` cuando actualices modelos para evitar esa primera extracción. El Colab funciona con un entorno Python 3.12 independiente del Python del kernel, sin TensorFlow/Keras.
 
 ## Ejecución local
 
-Usa Python 3.12, instala requirements.txt y en Linux también las bibliotecas de packages.txt. Crea .streamlit/secrets.toml con app_password. Ejecuta:
+Con Python 3.12:
 
-```bash
-python -m pip install -r requirements.txt
-python -m streamlit run streamlit_app.py
+```
+python -m pip install -r requirements_training.txt
+streamlit run streamlit_app.py
+python -m unittest test_moveai -q
 ```
 
-requirements_training.txt añade las dependencias de entrenamiento y pruebas. La app desplegada no las necesita. Se ejecutaron la calibración con scores reales y 38 pruebas de geometría, decisiones, vinculación de calibradores y sesiones. La ejecución actual de Streamlit Community Cloud y la prueba con el video original del usuario quedan pendientes: este paquete no fue desplegado en tu cuenta y ese MP4 no está disponible aquí.
+Para entrenamiento instala `requirements_training.txt` y ejecuta `rgb_dataset.py`, después `train_camera.py --manifest <ruta/manifest.json> --cache <ruta/cache> --output camera_modelos --workers 2`. `diagnose_video.py <video.mp4> --exercise elbow_flexion` genera JSON y fotogramas de cada repetición. No subas datasets o cachés al repositorio de la app.

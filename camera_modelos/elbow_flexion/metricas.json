@@ -1,0 +1,290 @@
+{
+  "n": 99,
+  "subjects": 24,
+  "balanced_accuracy": 0.6258183306055647,
+  "sensitivity_error": 0.6346153846153846,
+  "specificity": 0.6170212765957447,
+  "auc_roc": 0.7004909983633388,
+  "brier": 0.22102216035711003,
+  "confusion_correct_error": [
+    [
+      29,
+      18
+    ],
+    [
+      19,
+      33
+    ]
+  ],
+  "green_precision": 0.7,
+  "green_n": 10,
+  "green_subjects": 6,
+  "red_precision": 0.8,
+  "red_n": 15,
+  "application": {
+    "green_n": 14,
+    "green_subjects": 8,
+    "red_n": 15,
+    "yellow_n": 70,
+    "green_precision": 0.6428571428571429,
+    "red_precision": 0.8,
+    "definite_coverage": 0.29292929292929293,
+    "accuracy_when_definite": 0.7241379310344828
+  },
+  "criteria_only": {
+    "green_n": 8,
+    "green_subjects": 6,
+    "red_n": 33,
+    "yellow_n": 58,
+    "green_precision": 0.625,
+    "red_precision": 0.8484848484848485,
+    "definite_coverage": 0.41414141414141414,
+    "accuracy_when_definite": 0.8048780487804879
+  },
+  "folds": [
+    {
+      "n": 19,
+      "subjects": 5,
+      "balanced_accuracy": 0.6388888888888888,
+      "sensitivity_error": 0.7777777777777778,
+      "specificity": 0.5,
+      "auc_roc": 0.7777777777777778,
+      "brier": 0.21958410506835424,
+      "confusion_correct_error": [
+        [
+          5,
+          5
+        ],
+        [
+          2,
+          7
+        ]
+      ],
+      "green_precision": null,
+      "green_n": 0,
+      "green_subjects": 0,
+      "red_precision": 0.75,
+      "red_n": 4,
+      "fold": 1,
+      "candidate": "logistic_c01",
+      "test_subjects": [
+        "mendeley_rgb:13",
+        "mendeley_rgb:15",
+        "mendeley_rgb:16",
+        "mendeley_rgb:2",
+        "mendeley_rgb:8"
+      ]
+    },
+    {
+      "n": 23,
+      "subjects": 5,
+      "balanced_accuracy": 0.5692307692307692,
+      "sensitivity_error": 0.5384615384615384,
+      "specificity": 0.6,
+      "auc_roc": 0.6846153846153846,
+      "brier": 0.2169088548397378,
+      "confusion_correct_error": [
+        [
+          6,
+          4
+        ],
+        [
+          6,
+          7
+        ]
+      ],
+      "green_precision": 1.0,
+      "green_n": 1,
+      "green_subjects": 1,
+      "red_precision": 1.0,
+      "red_n": 5,
+      "fold": 2,
+      "candidate": "svm_c1",
+      "test_subjects": [
+        "mendeley_rgb:10",
+        "mendeley_rgb:18",
+        "mendeley_rgb:3",
+        "mendeley_rgb:5",
+        "mendeley_rgb:7"
+      ]
+    },
+    {
+      "n": 19,
+      "subjects": 5,
+      "balanced_accuracy": 0.5944444444444444,
+      "sensitivity_error": 0.3,
+      "specificity": 0.8888888888888888,
+      "auc_roc": 0.5777777777777778,
+      "brier": 0.26396548205031106,
+      "confusion_correct_error": [
+        [
+          8,
+          1
+        ],
+        [
+          7,
+          3
+        ]
+      ],
+      "green_precision": 0.5714285714285714,
+      "green_n": 7,
+      "green_subjects": 3,
+      "red_precision": 1.0,
+      "red_n": 1,
+      "fold": 3,
+      "candidate": "random_forest",
+      "test_subjects": [
+        "mendeley_rgb:12",
+        "mendeley_rgb:24",
+        "mendeley_rgb:26",
+        "mendeley_rgb:4",
+        "mendeley_rgb:9"
+      ]
+    },
+    {
+      "n": 19,
+      "subjects": 5,
+      "balanced_accuracy": 0.6833333333333333,
+      "sensitivity_error": 0.7,
+      "specificity": 0.6666666666666666,
+      "auc_roc": 0.6777777777777778,
+      "brier": 0.2166455681336262,
+      "confusion_correct_error": [
+        [
+          6,
+          3
+        ],
+        [
+          3,
+          7
+        ]
+      ],
+      "green_precision": 1.0,
+      "green_n": 2,
+      "green_subjects": 2,
+      "red_precision": 0.5,
+      "red_n": 4,
+      "fold": 4,
+      "candidate": "random_forest",
+      "test_subjects": [
+        "mendeley_rgb:19",
+        "mendeley_rgb:20",
+        "mendeley_rgb:21",
+        "mendeley_rgb:23",
+        "mendeley_rgb:6"
+      ]
+    },
+    {
+      "n": 19,
+      "subjects": 4,
+      "balanced_accuracy": 0.6722222222222223,
+      "sensitivity_error": 0.9,
+      "specificity": 0.4444444444444444,
+      "auc_roc": 0.8333333333333334,
+      "brier": 0.18887275074980978,
+      "confusion_correct_error": [
+        [
+          4,
+          5
+        ],
+        [
+          1,
+          9
+        ]
+      ],
+      "green_precision": null,
+      "green_n": 0,
+      "green_subjects": 0,
+      "red_precision": 1.0,
+      "red_n": 1,
+      "fold": 5,
+      "candidate": "random_forest",
+      "test_subjects": [
+        "mendeley_rgb:11",
+        "mendeley_rgb:14",
+        "mendeley_rgb:17",
+        "mendeley_rgb:22"
+      ]
+    }
+  ],
+  "rejected_unreadable": 34,
+  "development_subjects_excluded": [
+    "mendeley_rgb:1"
+  ],
+  "approved": false,
+  "approval_rule": "Piloto privado: balanced_accuracy>=0.70; sensibilidad/especificidad>=0.65; precision verde>=0.75 en >=15 videos y >=10 personas; las vistas de una persona no son muestras independientes",
+  "by_view": {
+    "diagonal": {
+      "n": 35,
+      "subjects": 21,
+      "balanced_accuracy": 0.6644736842105263,
+      "sensitivity_error": 0.5789473684210527,
+      "specificity": 0.75,
+      "auc_roc": 0.7532894736842105,
+      "brier": 0.20717372418634086,
+      "confusion_correct_error": [
+        [
+          12,
+          4
+        ],
+        [
+          8,
+          11
+        ]
+      ],
+      "green_precision": 0.6666666666666666,
+      "green_n": 3,
+      "green_subjects": 3,
+      "red_precision": 0.6666666666666666,
+      "red_n": 3
+    },
+    "front": {
+      "n": 33,
+      "subjects": 22,
+      "balanced_accuracy": 0.5611111111111111,
+      "sensitivity_error": 0.4,
+      "specificity": 0.7222222222222222,
+      "auc_roc": 0.6592592592592592,
+      "brier": 0.22748563944042616,
+      "confusion_correct_error": [
+        [
+          13,
+          5
+        ],
+        [
+          9,
+          6
+        ]
+      ],
+      "green_precision": 0.8,
+      "green_n": 5,
+      "green_subjects": 4,
+      "red_precision": 1.0,
+      "red_n": 3
+    },
+    "side": {
+      "n": 31,
+      "subjects": 19,
+      "balanced_accuracy": 0.5982905982905983,
+      "sensitivity_error": 0.8888888888888888,
+      "specificity": 0.3076923076923077,
+      "auc_roc": 0.6752136752136751,
+      "brier": 0.22977701378380327,
+      "confusion_correct_error": [
+        [
+          4,
+          9
+        ],
+        [
+          2,
+          16
+        ]
+      ],
+      "green_precision": 0.5,
+      "green_n": 2,
+      "green_subjects": 1,
+      "red_precision": 0.7777777777777778,
+      "red_n": 9
+    }
+  }
+}
