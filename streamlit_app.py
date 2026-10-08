@@ -9,6 +9,7 @@ from geometry import EXERCISES,TARGETS
 from web_session import SessionWorkspace
 from moveai_core import evaluate,diagnostic
 from preview import annotated
+from video_overlay import render_video
 from feedback import save_review,export_reviews
 
 RESULT_LABELS={"verde":"Ejecución correcta","rojo":"Necesita corrección","amarillo":"No se pudo evaluar"}
@@ -42,6 +43,8 @@ if not st.session_state.get("authenticated"):
         else:st.error("Contraseña incorrecta.")
     st.stop()
 if "workspace" not in st.session_state:st.session_state.workspace=SessionWorkspace()
+if not hasattr(st.session_state.workspace,"rendered_video"):
+    st.session_state.workspace.close();st.session_state.workspace=SessionWorkspace()
 workspace=st.session_state.workspace
 with st.sidebar:
     st.title("MOVEAI");st.caption("Revisa tu técnica")
@@ -62,13 +65,19 @@ with controls:
     except ValueError as error:st.error(str(error))
     if upload:st.video(upload)
     if st.button("Analizar video",type="primary",disabled=workspace.video is None,use_container_width=True):
-        workspace.result=None
+        workspace.clear_result()
         with st.spinner("Analizando tu técnica…"):
             try:workspace.result=evaluate(workspace.video,exercise,side,target)
             except ValueError as error:st.error(str(error))
             except Exception:
                 logging.exception("MOVEAI RGB: evaluación")
                 st.error("No se pudo procesar el video. Revisa los registros de la app.")
+        if workspace.result:
+            with st.spinner("Preparando tu video con el análisis…"):
+                try:workspace.rendered_video=render_video(workspace.video,workspace.result,workspace.root/"analizado.mp4")
+                except Exception:
+                    logging.exception("MOVEAI RGB: video anotado")
+                    workspace.render_error="No se pudo preparar el video anotado. El resultado del análisis sigue disponible."
 with output:
     result=workspace.result
     if not result:st.info("Tu resultado aparecerá aquí.")
@@ -78,6 +87,11 @@ with output:
         if result["color"]=="rojo":st.write("Pide a un profesional que revise tu técnica.")
         st.caption("Resultado según los criterios visibles de esta grabación.")
         a,b,c=st.columns(3);a.metric("Correctas",result["counts"]["verde"]);b.metric("A corregir",result["counts"]["rojo"]);c.metric("Sin evaluar",result["counts"]["amarillo"])
+        if workspace.rendered_video and workspace.rendered_video.exists():
+            st.video(str(workspace.rendered_video))
+            st.caption("Verde: cumple · Rojo: a corregir · Amarillo: sin evaluar. Las líneas siguen las repeticiones revisadas.")
+            st.download_button("Descargar video analizado",workspace.rendered_video.read_bytes(),file_name="moveai_video_analizado.mp4",mime="video/mp4",on_click="ignore")
+        elif workspace.render_error:st.info(workspace.render_error)
         reps=result["repetitions"]
         if not reps and side!="automatica":st.info("La extremidad seleccionada no mostró un ciclo evaluable. Prueba Automática para seguir el lado que realiza el ejercicio.")
         if reps:
@@ -88,8 +102,6 @@ with output:
             rep=reps[chosen]
             {"verde":st.success,"rojo":st.error,"amarillo":st.warning}[rep["color"]](f'Repetición {chosen+1}: {REP_LABELS[rep["color"]]}')
             if rep["color"]!="verde":st.write(rep["reason"])
-            preview=annotated(result["sample"],rep)
-            if preview is not None:st.image(preview,caption=f'Repetición {chosen+1}',use_container_width=True)
             for x in rep["checks"]:
                 if x["status"] in ["fuera_de_rango","limite"]:st.write("• "+x["advice"])
         with st.expander("Ver detalles del análisis"):
@@ -102,6 +114,8 @@ with output:
                 st.caption(result["model"]["scope"])
             else:st.caption(result["model"]["reason"])
             if reps:
+                preview=annotated(result["sample"],rep)
+                if preview is not None:st.image(preview,caption=f'Repetición {chosen+1}',use_container_width=True)
                 st.caption(f'Repetición {chosen+1} · {rep["start_time"]:.1f}–{rep["end_time"]:.1f} s · {rep["screen_side"]}')
                 words={"en_rango":"Cumple","fuera_de_rango":"A corregir","limite":"Cerca del límite","no_evaluable":"Sin evaluar"}
                 st.dataframe([{"Criterio":x["name"],"Medida (°)":x["value"],"Referencia":("≥ " if x["direction"]=="min" else "≤ ")+str(x["reference"]),"Resultado":words[x["status"]]} for x in rep["checks"]],hide_index=True,use_container_width=True)
