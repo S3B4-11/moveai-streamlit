@@ -1,13 +1,13 @@
 """Presenta por separado lo medido en una repetición y el juicio del video."""
-APP_REVISION = '2026.10.13-r7'
-POLICY_VERSION = 'moveai_feedback_v7'
+APP_REVISION = '2026.10.13-r8'
+POLICY_VERSION = 'moveai_feedback_v8'
 
 def repetition_label(rep, result):
     if rep['color'] == 'rojo':
         return 'A corregir'
     if rep['color'] == 'verde':
         return 'Correcta' if result['color'] == 'verde' else 'Sin fallos medidos'
-    return 'Por confirmar' if rep['complete'] and result['quality']['ready'] else 'Sin evaluar'
+    return 'Sin evaluar'
 
 def repetition_color(rep, result):
     if rep['color'] == 'verde' and result['color'] != 'verde':

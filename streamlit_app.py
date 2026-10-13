@@ -2,6 +2,7 @@
 import hmac
 import json
 import logging
+import hashlib
 from pathlib import Path
 import pandas as pd
 import streamlit as st
@@ -14,7 +15,7 @@ from feedback import save_review,export_reviews
 from feedback_presentation import APP_REVISION, POLICY_VERSION, repetition_label, repetition_color, count_labels
 from pose_selection import selection_preview
 
-RESULT_LABELS={"verde":"Ejecución correcta","rojo":"Necesita corrección","amarillo":"No se pudo evaluar"}
+RESULT_LABELS={"verde":"Ejercicio realizado correctamente","rojo":"Ejercicio mal ejecutado","amarillo":"No se pudo evaluar"}
 REP_LABELS={"verde":"Correcta","rojo":"A corregir","amarillo":"Sin evaluar"}
 
 def result_explanation(result):
@@ -65,20 +66,22 @@ st.write("Sube tu video y revisa el resultado de cada repetición.")
 controls,output=st.columns([1,1.5],gap="large")
 with controls:
     exercise=st.selectbox("Ejercicio",list(EXERCISES),format_func=EXERCISES.get)
+    upload=st.file_uploader("Video",type=["mp4","mov","avi","webm","m4v"])
+    uploaded_data=upload.getvalue() if upload else None
+    video_key='r8_'+(hashlib.sha256(uploaded_data).hexdigest()[:16] if uploaded_data else 'empty')+'_'+exercise
     with st.expander("Ajustar ejercicio y toma"):
-        target=st.slider("Recorrido objetivo (grados)",40,170,TARGETS[exercise],5,key="target_"+exercise)
-        side=st.selectbox("Extremidad",["automatica","izquierda","derecha"],format_func=lambda x:"Automática: lados activos" if x=="automatica" else x.capitalize()+" de la persona")
+        target=st.slider("Recorrido objetivo (grados)",40,170,TARGETS[exercise],5,key=video_key+'_target')
+        side=st.selectbox("Extremidad",["automatica","izquierda","derecha"],format_func=lambda x:"Automática: lados activos" if x=="automatica" else x.capitalize()+" de la persona",key=video_key+'_side')
         st.caption("El resultado indica también el lado en la imagen para evitar confusiones.")
-        rotation=st.selectbox("Orientación del video",["auto",0,90,-90,180],format_func=lambda x:{"auto":"Automática",0:"Sin giro adicional",90:"90° a la derecha",-90:"90° a la izquierda",180:"180°"}[x])
-        choose_person=st.checkbox('Elegir persona (si aparecen varias)')
+        rotation=st.selectbox("Orientación del video",["auto",0,90,-90,180],format_func=lambda x:{"auto":"Automática",0:"Sin giro adicional",90:"90° a la derecha",-90:"90° a la izquierda",180:"180°"}[x],key=video_key+'_rotation')
+        choose_person=st.checkbox('Elegir persona (si aparecen varias)',key=video_key+'_choose')
         person_target=None
         if choose_person:
             st.caption('Coloca la marca en el centro del tronco de la persona que quieres revisar.')
-            px=st.slider('Posición horizontal (%)',5,95,50)
-            py=st.slider('Posición vertical (%)',5,95,40)
+            px=st.slider('Posición horizontal (%)',5,95,50,key=video_key+'_px')
+            py=st.slider('Posición vertical (%)',5,95,40,key=video_key+'_py')
             person_target=[px/100.,py/100.]
-    upload=st.file_uploader("Video",type=["mp4","mov","avi","webm","m4v"])
-    try:workspace.set_input(upload.getvalue() if upload else None,Path(upload.name).suffix if upload else ".mp4",exercise,side,target,rotation,person_target)
+    try:workspace.set_input(uploaded_data,Path(upload.name).suffix if upload else ".mp4",exercise,side,target,rotation,person_target)
     except ValueError as error:st.error(str(error))
     if upload:st.video(upload)
     if workspace.video and person_target is not None:
@@ -120,35 +123,32 @@ with output:
             st.write(error["advice"])
             st.write("**Qué puede provocar:** "+error["consequence"])
             if error.get('scope')=='postura':st.caption(f"Postura observada entre {error['start_time']:.1f} y {error['end_time']:.1f} s; no se cuenta como una repetición.")
-        observations=result.get('posture_observations',[])
-        if observations:
-            with st.expander('Posturas visibles revisadas'):
-                st.caption('Estos tramos revisan alineación. No califican por sí solos el recorrido completo.')
-                for observation in observations:
-                    names='; '.join(c['name']+(' · a corregir' if c['status']=='fuera_de_rango' else ' · sin fallo medido') for c in observation['checks'])
-                    st.write(f"{observation['start_time']:.1f}–{observation['end_time']:.1f} s: {names}")
-        st.caption("Revisión por repetición: los criterios medidos y la clasificación del video se muestran por separado.")
-        labels=count_labels(result)
-        a,b,c=st.columns(3);a.metric(labels[0],result["counts"]["verde"]);b.metric(labels[1],result["counts"]["rojo"]);c.metric(labels[2],result["counts"]["amarillo"])
         if workspace.rendered_video and workspace.rendered_video.exists():
             st.video(str(workspace.rendered_video))
-            st.caption("Verde: correcta · Rojo: a corregir · Gris: sin fallo localizado · Amarillo: sin evaluar o por confirmar.")
+            st.caption("Verde: correcta · Rojo: a corregir · Gris: sin fallo localizado · Amarillo: tramo sin evaluar.")
             st.download_button("Descargar video analizado",workspace.rendered_video.read_bytes(),file_name="moveai_video_analizado.mp4",mime="video/mp4",on_click="ignore")
         elif workspace.render_error:st.info(workspace.render_error)
         reps=result["repetitions"]
         if not reps and side!="automatica":st.info("La extremidad seleccionada no mostró un ciclo evaluable. Prueba Automática para seguir el lado que realiza el ejercicio.")
-        if reps:
-            preferred=next((i for i,r in enumerate(reps) if r["complete"] and r["color"]==result["color"]),
-                           next((i for i,r in enumerate(reps) if r["complete"]),0))
-            chosen=st.selectbox("Ver una repetición",range(len(reps)),index=preferred,
-                               format_func=lambda i:f'Repetición {i+1} · {repetition_label(reps[i],result)}')
-            rep=reps[chosen]
-            {"verde":st.success,"rojo":st.error,"amarillo":st.warning,"neutro":st.info}[repetition_color(rep,result)](f'Repetición {chosen+1}: {repetition_label(rep,result)}')
-            if rep['color']=='verde' and result['color']!='verde':st.caption('Los criterios revisados cumplen en esta repetición. Eso no confirma todos los aspectos de la técnica ni localiza el resultado del clasificador.')
-            if rep["color"]!="verde":st.write(rep["reason"])
-            for x in rep["checks"]:
-                if x["status"] in ["fuera_de_rango","limite"]:st.write("• "+x["advice"])
+        with st.expander("Ver repeticiones"):
+            if reps:
+                preferred=next((i for i,r in enumerate(reps) if r["complete"] and r["color"]==result["color"]),
+                               next((i for i,r in enumerate(reps) if r["complete"]),0))
+                chosen=st.selectbox("Ver una repetición",range(len(reps)),index=preferred,
+                                   format_func=lambda i:f'Repetición {i+1} · {repetition_label(reps[i],result)}')
+                rep=reps[chosen]
+                {"verde":st.success,"rojo":st.error,"amarillo":st.warning,"neutro":st.info}[repetition_color(rep,result)](f'Repetición {chosen+1}: {repetition_label(rep,result)}')
+                if rep['color']=='verde' and result['color']!='verde':st.caption('Los criterios revisados cumplen en esta repetición. Eso no confirma todos los aspectos de la técnica ni localiza el resultado del clasificador.')
+                if rep["color"]!="verde":st.write(rep["reason"])
+                for x in rep["checks"]:
+                    if x["status"] in ["fuera_de_rango","limite"]:st.write("• "+x["advice"])
         with st.expander("Ver detalles del análisis"):
+            labels=count_labels(result)
+            a,b,c=st.columns(3);a.metric(labels[0],result['counts']['verde']);b.metric(labels[1],result['counts']['rojo']);c.metric(labels[2],result['counts']['amarillo'])
+            st.caption('Los contadores describen criterios por repetición. El clasificador califica el video completo.')
+            for observation in result.get('posture_observations',[]):
+                names='; '.join(c['name']+(' · a corregir' if c['status']=='fuera_de_rango' else ' · sin fallo medido') for c in observation['checks'])
+                st.write(f"Postura {observation['start_time']:.1f}–{observation['end_time']:.1f} s: {names}")
             st.caption(f"Versión del análisis: {result.get('app_revision','anterior')}")
             st.write(result["reason"])
             if result["criterion_score"] is not None:

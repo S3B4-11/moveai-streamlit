@@ -114,7 +114,7 @@ class PersonPostureTests(unittest.TestCase):
             next(x for x in app.button if x.label=='Analizar video').click().run()
             self.assertFalse(app.exception)
             self.assertEqual(evaluate.call_args.kwargs['person_target'],[.3,.4])
-            self.assertTrue(any(x.value=='Necesita corrección' for x in app.error))
+            self.assertTrue(any(x.value=='Ejercicio mal ejecutado' for x in app.error))
             self.assertTrue(any('Qué corregir' in x.value for x in app.markdown))
             self.assertTrue(any('no se cuenta como una repetición' in x.value for x in app.caption))
             self.assertFalse(any(x.label=='Ver una repetición' for x in app.selectbox))

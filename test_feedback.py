@@ -53,7 +53,7 @@ class FeedbackTests(unittest.TestCase):
         class Upload(io.BytesIO):
             name='sentadilla.mp4'
             def __init__(self):super().__init__(b'video test')
-        for p,status in [(.34,'incorrect'),(.45,'uncertain')]:
+        for p,status in [(.34,'incorrect'),(.35,'incorrect')]:
             r=visual_fixture();r['quality']['ready']=True
             r['model']={'available':True,'p_correct':p,'scope':'Prueba de presentación'}
             apply_policy(r)
@@ -69,7 +69,7 @@ class FeedbackTests(unittest.TestCase):
                 self.assertTrue(all('Sin fallos medidos' in x for x in selector.options))
                 self.assertFalse(any('No se pudo evaluar' in x.value for x in app.warning))
                 self.assertTrue(any(APP_REVISION in x.value for x in app.caption))
-                if status=='incorrect':self.assertTrue(any(x.value=='Necesita corrección' for x in app.error))
+                if status=='incorrect':self.assertTrue(any(x.value=='Ejercicio mal ejecutado' for x in app.error))
                 else:self.assertTrue(any(x.value=='Resultado no concluyente' for x in app.warning))
                 app.session_state['workspace'].close()
 
@@ -103,7 +103,7 @@ class FeedbackTests(unittest.TestCase):
     def test_current_video_classifier_does_not_localize_bad_repetitions(self):
         from test_video_overlay import visual_fixture,coloured_pixels
         from video_overlay import VideoOverlay,COLORS
-        for p in [.34,.45]:
+        for p in [.34,.35]:
             r=visual_fixture();r['quality']['ready']=True;r['model']={'available':True,'p_correct':p}
             apply_policy(r)
             frame=VideoOverlay(r,360).draw(np.full((640,360,3),30,np.uint8),r['repetitions'][0]['peak_time'])
@@ -158,7 +158,7 @@ class FeedbackTests(unittest.TestCase):
         r=analyze(fixture(peak=110),'elbow_flexion')
         for rep in r['repetitions']:rep['color']='amarillo'
         r['quality']['ready']=True;r['model']={'available':True,'p_correct':.6}
-        r=apply_policy(r);self.assertEqual(r['status'],'uncertain');self.assertEqual(r['title'],'Resultado no concluyente')
+        r=apply_policy(r);self.assertEqual(r['status'],'correct');self.assertEqual(r['title'],'Ejercicio realizado correctamente')
     def test_orientation_uses_body_and_legs_not_just_trunk_lean(self):
         sample=squat_fixture();self.assertEqual(inferred_rotation(sample),0)
         # Ejes del cuerpo girados; misma confianza y sin modificar los datos originales.

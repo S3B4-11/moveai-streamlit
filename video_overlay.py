@@ -10,7 +10,7 @@ from geometry import JOINTS
 from feedback_presentation import repetition_color, repetition_label
 
 COLORS={"verde":(34,197,94),"rojo":(239,68,68),"amarillo":(245,158,11),"neutro":(203,213,225)}
-LABELS={"verde":"Ejecución correcta","rojo":"Necesita corrección","amarillo":"No se pudo evaluar","neutro":"Entre repeticiones"}
+LABELS={"verde":"Ejercicio realizado correctamente","rojo":"Ejercicio mal ejecutado","amarillo":"No se pudo evaluar","neutro":"Entre repeticiones"}
 
 class VideoOverlay:
     def __init__(self,result,width):
@@ -111,8 +111,8 @@ class VideoOverlay:
         label=LABELS[banner_color]
         if drawn and rep and self.result.get('feedback_version') and not video_only:
             label=repetition_label(rep,self.result)
-        if drawn and banner_color=='amarillo' and self.result.get('status')=='uncertain':label='Resultado no concluyente'
-        if drawn and posture:label='Necesita corrección' if banner_color=='rojo' else 'Alineación sin fallo medido'
+        if drawn and banner_color=='amarillo' and self.result.get('status')=='uncertain':label='No se pudo evaluar'
+        if drawn and posture:label='Ejercicio mal ejecutado' if banner_color=='rojo' else 'Alineación revisada'
         draw.text((padding*2,top+padding*2+self.font_size),label,font=self.font,fill=COLORS[banner_color])
         return cv2.cvtColor(np.asarray(image),cv2.COLOR_RGB2BGR)
 
