@@ -7,6 +7,7 @@ import tempfile
 import numpy as np
 from PIL import Image,ImageDraw,ImageFont
 from geometry import JOINTS
+from feedback_presentation import repetition_color, repetition_label
 
 COLORS={"verde":(34,197,94),"rojo":(239,68,68),"amarillo":(245,158,11),"neutro":(203,213,225)}
 LABELS={"verde":"Ejecución correcta","rojo":"Necesita corrección","amarillo":"No se pudo evaluar","neutro":"Entre repeticiones"}
@@ -58,12 +59,17 @@ class VideoOverlay:
         height,width=frame.shape[:2];points,visibility=self.pose_at(time)
         rep=self.repetition_at(time)
         color=rep["color"] if rep else "neutro" if self.result["repetitions"] else "amarillo"
+        if rep and self.result.get('feedback_version'):
+            color=repetition_color(rep,self.result)
+        video_only=bool(rep and self.result.get("decision_source")=="modelo_binario" and not self.result.get("errors"))
+        banner_color="rojo" if video_only else color
         # Un clasificador de video no localiza un fallo en una articulación.
         # Cuando contradice los criterios, el video evita marcar certeza en verde.
         source=self.result.get("decision_source")
         if rep and (source in ("modelo_incierto","evidencia_en_conflicto")
                     or (source=="modelo_rgb" and self.result["color"]=="rojo" and color=="verde")):
             color="amarillo"
+        banner_color="rojo" if video_only else color
         drawn=0
         if points is not None:
             def bone(a,b,rgb):
@@ -78,19 +84,29 @@ class VideoOverlay:
                     cv2.circle(frame,v,weight,tuple(reversed(rgb)),-1,cv2.LINE_AA)
                 return True
             for a,b in [(11,12),(23,24),(11,23),(12,24)]:bone(a,b,COLORS["neutro"])
-            sides=list(JOINTS) if rep and rep["side"]=="ambos" else [rep["side"]] if rep else self.sides
+            alignment={c['side']:c for c in rep.get('alignment_checks',[])} if rep else {}
+            sides=list(alignment) if alignment else list(JOINTS) if rep and rep["side"]=="ambos" else [rep["side"]] if rep else self.sides
             for side in sides:
                 s,e,w,h,k,a=JOINTS[side]
                 chain=(h,k,a) if self.result["exercise"] in ("squat","inline_lunge") else (s,e,w)
-                for u,v in zip(chain,chain[1:]):drawn+=int(bone(u,v,COLORS[color]))
-        if not drawn:color="amarillo"
+                side_color="neutro" if video_only else color
+                if side in alignment and not video_only:
+                    side_color={"fuera_de_rango":"rojo","en_rango":color,"no_evaluable":"amarillo"}[alignment[side]['status']]
+                    if any(c['status']=='fuera_de_rango' and not c['key'].startswith('alineacion_rodilla_') for c in rep['checks']):side_color='rojo'
+                    if color=='rojo' and not self.result.get('errors'):side_color='rojo'
+                for u,v in zip(chain,chain[1:]):drawn+=int(bone(u,v,COLORS[side_color]))
+        if not drawn:color=banner_color="amarillo"
         image=Image.fromarray(cv2.cvtColor(frame,cv2.COLOR_BGR2RGB));draw=ImageDraw.Draw(image)
         padding=max(8,round(width/40));top=padding
         box_height=self.font_size*2+padding*3
         draw.rounded_rectangle((padding,top,width-padding,top+box_height),radius=padding,fill=(15,20,28))
-        first="MOVEAI"+(f' · Rep. {rep["number"]}' if rep else "")+f" · {int(time)//60:02d}:{int(time)%60:02d}"
+        first="MOVEAI"+(" · Video" if video_only else f' · Rep. {rep["number"]}' if rep else "")+f" · {int(time)//60:02d}:{int(time)%60:02d}"
         draw.text((padding*2,top+padding),first,font=self.font,fill=(215,222,230))
-        draw.text((padding*2,top+padding*2+self.font_size),LABELS[color],font=self.font,fill=COLORS[color])
+        label=LABELS[banner_color]
+        if drawn and rep and self.result.get('feedback_version') and not video_only:
+            label=repetition_label(rep,self.result)
+        if drawn and banner_color=='amarillo' and self.result.get('status')=='uncertain':label='Resultado no concluyente'
+        draw.text((padding*2,top+padding*2+self.font_size),label,font=self.font,fill=COLORS[banner_color])
         return cv2.cvtColor(np.asarray(image),cv2.COLOR_RGB2BGR)
 
 def render_video(source,result,destination):

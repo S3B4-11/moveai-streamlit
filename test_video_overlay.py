@@ -72,6 +72,8 @@ class OverlayTests(unittest.TestCase):
         def encoded(source,result,destination):
             Path(destination).write_bytes(b"rendered video");return Path(destination)
         result=visual_fixture();result["model"]={"available":False,"reason":"criterios"}
+        from feedback_presentation import APP_REVISION,POLICY_VERSION
+        result.update(feedback_version=POLICY_VERSION,app_revision=APP_REVISION)
         app=AppTest.from_file(str(Path(__file__).parent/"streamlit_app.py"),default_timeout=20)
         app.secrets["app_password"]="test-pass";app.session_state["authenticated"]=True
         with patch.object(st,"file_uploader",return_value=Upload()),patch("moveai_core.evaluate",return_value=result),patch("video_overlay.render_video",side_effect=encoded) as render:

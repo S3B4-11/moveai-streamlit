@@ -1,27 +1,37 @@
 """API pública: video, repeticiones y evidencia de cámara."""
 from analysis import analyze
 from pose import extract_video
-from camera_model import predict,fuse,hard_failure
+try:
+    from inference_router import predict
+    ROUTER_CONTEXT=True
+except ImportError:
+    from camera_model import predict
+    ROUTER_CONTEXT=False
+from squat_alignment import add_alignment
+from decision_policy import apply_policy
+from video_orientation import inferred_rotation,rotate_video
+from frontal_quality import repair_frontal_projection,predict_resolved_frontal
 
-def evaluate(path,exercise,side="automatica",target=None):
-    result=analyze(extract_video(path),exercise,side,target)
-    model=predict(result["sample"],exercise);result["model"]=model
-    if model["available"]:
-        color,source=fuse(result["color"],model["p_correct"],result["quality"]["ready"],hard_failure(result))
-        result.update(color=color,decision_source=source)
-        if source=="modelo_rgb":
-            result.update(title="Ejecución probablemente correcta" if color=="verde" else "Revisar la ejecución",
-                          reason="El detector RGB supera 75% para esta clase. El recorrido objetivo y los criterios por repetición se muestran por separado.")
-        elif source=="evidencia_en_conflicto":
-            result.update(title="El modelo y las medidas necesitan revisión",reason="Hay evidencia contradictoria; no se convierte en una afirmación segura de técnica incorrecta.")
-        elif source=="modelo_incierto":
-            result.update(title="El detector necesita revisión",reason="No alcanza 75% de correcta ni de incorrecta. Revisa los criterios y el video.")
-    return result
+def evaluate(path,exercise,side="automatica",target=None,rotation="auto"):
+    sample=extract_video(path)
+    turn=inferred_rotation(sample) if rotation=="auto" else int(rotation)
+    if turn not in (0,90,-90,180):raise ValueError("Orientación de video inválida.")
+    analysis_video=path
+    if turn:
+        analysis_video=rotate_video(path,turn)
+        sample=extract_video(analysis_video)
+    result=analyze(sample,exercise,side,target)
+    repair_frontal_projection(result)
+    model=predict(result["sample"],exercise,quality_context=result) if ROUTER_CONTEXT else predict(result['sample'],exercise)
+    if not model['available']:model=predict_resolved_frontal(result['sample'],exercise,result,model)
+    result["model"]=model
+    result.update(analysis_video=str(analysis_video),orientation_rotation=turn)
+    return apply_policy(add_alignment(result))
 
 def diagnostic(result):
     import math
     import numpy as np
-    payload={k:v for k,v in result.items() if k not in ["sample","tracks"]}
+    payload={k:v for k,v in result.items() if k not in ["sample","tracks","analysis_video"]}
     payload["tracks"]=[{k:v for k,v in t.items() if k not in ["series","cycle_series","valid"]} for t in result["tracks"]]
     def clean(v):
         if isinstance(v,dict):return {k:clean(x) for k,x in v.items()}

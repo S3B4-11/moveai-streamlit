@@ -7,19 +7,21 @@ class SessionWorkspace:
     def __init__(self):
         self.temporary=tempfile.TemporaryDirectory(prefix="moveai_")
         self.root=Path(self.temporary.name);self.video=None;self.digest=None;self.key=None;self.result=None
-        self.rendered_video=None;self.render_error=None
+        self.rendered_video=None;self.render_error=None;self.normalized_video=None
     @property
     def reviews(self):return self.root/"reviews"
     def clear_result(self):
         self.result=None;self.render_error=None
         if self.rendered_video:self.rendered_video.unlink(missing_ok=True)
         self.rendered_video=None
-    def set_input(self,data,suffix,exercise,side,target):
+        if self.normalized_video and self.normalized_video.is_relative_to(self.root):self.normalized_video.unlink(missing_ok=True)
+        self.normalized_video=None
+    def set_input(self,data,suffix,exercise,side,target,rotation="auto"):
         if not data:
             if self.video:self.video.unlink(missing_ok=True)
             self.clear_result();self.video=self.digest=self.key=None;return
         if len(data)>150*1024*1024:raise ValueError("El video supera 150 MB.")
-        digest=hashlib.sha256(data).hexdigest();key=(digest,exercise,side,float(target))
+        digest=hashlib.sha256(data).hexdigest();key=(digest,exercise,side,float(target),str(rotation))
         if key!=self.key:self.clear_result()
         if digest!=self.digest:
             if self.video:self.video.unlink(missing_ok=True)
