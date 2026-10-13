@@ -58,11 +58,16 @@ class VideoOverlay:
         import cv2
         height,width=frame.shape[:2];points,visibility=self.pose_at(time)
         rep=self.repetition_at(time)
+        observations=[o for o in self.result.get('posture_observations',[]) if o['start_time']<=time<=o['end_time']]
+        posture=next((o for o in observations if any(c['status']=='fuera_de_rango' for c in o['checks'])),observations[0] if observations else None)
         color=rep["color"] if rep else "neutro" if self.result["repetitions"] else "amarillo"
         if rep and self.result.get('feedback_version'):
             color=repetition_color(rep,self.result)
         video_only=bool(rep and self.result.get("decision_source")=="modelo_binario" and not self.result.get("errors"))
         banner_color="rojo" if video_only else color
+        if posture and not video_only:
+            color='rojo' if any(c['status']=='fuera_de_rango' for c in posture['checks']) else 'neutro'
+            banner_color=color
         # Un clasificador de video no localiza un fallo en una articulación.
         # Cuando contradice los criterios, el video evita marcar certeza en verde.
         source=self.result.get("decision_source")
@@ -84,15 +89,15 @@ class VideoOverlay:
                     cv2.circle(frame,v,weight,tuple(reversed(rgb)),-1,cv2.LINE_AA)
                 return True
             for a,b in [(11,12),(23,24),(11,23),(12,24)]:bone(a,b,COLORS["neutro"])
-            alignment={c['side']:c for c in rep.get('alignment_checks',[])} if rep else {}
+            alignment={c['side']:c for c in (posture['checks'] if posture else rep.get('alignment_checks',[]) if rep else [])}
             sides=list(alignment) if alignment else list(JOINTS) if rep and rep["side"]=="ambos" else [rep["side"]] if rep else self.sides
             for side in sides:
                 s,e,w,h,k,a=JOINTS[side]
                 chain=(h,k,a) if self.result["exercise"] in ("squat","inline_lunge") else (s,e,w)
                 side_color="neutro" if video_only else color
                 if side in alignment and not video_only:
-                    side_color={"fuera_de_rango":"rojo","en_rango":color,"no_evaluable":"amarillo"}[alignment[side]['status']]
-                    if any(c['status']=='fuera_de_rango' and not c['key'].startswith('alineacion_rodilla_') for c in rep['checks']):side_color='rojo'
+                    side_color={"fuera_de_rango":"rojo","en_rango":'verde' if color=='verde' else 'neutro',"no_evaluable":"amarillo"}[alignment[side]['status']]
+                    if rep and rep['color']=='rojo' and (rep['complete'] or rep.get('observable_error')) and any(c['status']=='fuera_de_rango' and not c['key'].startswith('alineacion_rodilla_') for c in rep['checks']):side_color='rojo'
                     if color=='rojo' and not self.result.get('errors'):side_color='rojo'
                 for u,v in zip(chain,chain[1:]):drawn+=int(bone(u,v,COLORS[side_color]))
         if not drawn:color=banner_color="amarillo"
@@ -101,11 +106,13 @@ class VideoOverlay:
         box_height=self.font_size*2+padding*3
         draw.rounded_rectangle((padding,top,width-padding,top+box_height),radius=padding,fill=(15,20,28))
         first="MOVEAI"+(" · Video" if video_only else f' · Rep. {rep["number"]}' if rep else "")+f" · {int(time)//60:02d}:{int(time)%60:02d}"
+        if posture:first='MOVEAI · Postura'+f" · {int(time)//60:02d}:{int(time)%60:02d}"
         draw.text((padding*2,top+padding),first,font=self.font,fill=(215,222,230))
         label=LABELS[banner_color]
         if drawn and rep and self.result.get('feedback_version') and not video_only:
             label=repetition_label(rep,self.result)
         if drawn and banner_color=='amarillo' and self.result.get('status')=='uncertain':label='Resultado no concluyente'
+        if drawn and posture:label='Necesita corrección' if banner_color=='rojo' else 'Alineación sin fallo medido'
         draw.text((padding*2,top+padding*2+self.font_size),label,font=self.font,fill=COLORS[banner_color])
         return cv2.cvtColor(np.asarray(image),cv2.COLOR_RGB2BGR)
 

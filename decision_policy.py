@@ -26,6 +26,12 @@ def apply_policy(result):
                 consequence=c.get('consequence') or CONSEQUENCES.get(c['key'],'Revisa este patrón con un profesional antes de aumentar la carga.')
                 errors.append(dict(key=c['key'],name=c['name'],advice=c['advice'],consequence=consequence,
                                    repetition=rep['number'],side=c.get('side',rep['side']),source=c.get('source')))
+    for observation in result.get('posture_observations',[]):
+        for c in observation['checks']:
+            if c['status']=='fuera_de_rango':
+                errors.append(dict(key=c['key'],name=c['name'],advice=c['advice'],consequence=c['consequence'],
+                                   repetition=None,side=c['side'],source=c.get('source'),
+                                   start_time=observation['start_time'],end_time=observation['end_time'],scope='postura'))
     result['errors']=errors
     result['counts']={c:sum(r['color']==c for r in reps) for c in ['verde','rojo','amarillo']}
     complete=[r for r in reps if r['complete']]
@@ -50,9 +56,16 @@ def apply_policy(result):
                       reason='Hay datos del movimiento, pero no una conclusión clara sobre la técnica. No se considera un error confirmado.')
         if complete and all(r['color']=='verde' for r in complete):
             result['reason']='Los criterios medidos no muestran fallos, pero el modelo no permite confirmar la ejecución del video.'
+    elif result.get('posture_observations'):
+        result.update(color='amarillo',status='uncertain',title='Resultado no concluyente',decision_source='postura_parcial',
+                      reason='Se pudo revisar la alineación en algunos tramos, sin un fallo confirmado. Falta una lectura continua del movimiento para calificar la ejecución completa.')
     else:
         result.update(color='amarillo',status='unreadable',title='No se pudo evaluar',decision_source='lectura_insuficiente',
                       reason='Falta una repetición completa o una lectura fiable de las articulaciones. Graba el cuerpo y los pies visibles desde el inicio hasta el retorno.')
+        if result.get('reading',{}).get('ambiguous_fraction',0)>.2:
+            result['reason']='Hay varias personas y no se pudo seguir a una con suficiente certeza. Activa Elegir persona en Ajustar ejercicio y toma.'
+        elif result['exercise']=='squat' and result.get('reading',{}).get('detected_fraction',0)>.5:
+            result['reason']='Se localizó a la persona, pero no se pudo medir rodillas, tobillos y pies con suficiente continuidad. No hay un fallo técnico confirmado con esas medidas.'
     result['feedback_version']=POLICY_VERSION
     result['app_revision']=APP_REVISION
     result['decision_thresholds']={'correct':.75,'incorrect':.65}

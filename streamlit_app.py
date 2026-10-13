@@ -12,6 +12,7 @@ from preview import annotated
 from video_overlay import render_video
 from feedback import save_review,export_reviews
 from feedback_presentation import APP_REVISION, POLICY_VERSION, repetition_label, repetition_color, count_labels
+from pose_selection import selection_preview
 
 RESULT_LABELS={"verde":"Ejecución correcta","rojo":"Necesita corrección","amarillo":"No se pudo evaluar"}
 REP_LABELS={"verde":"Correcta","rojo":"A corregir","amarillo":"Sin evaluar"}
@@ -47,6 +48,8 @@ if not st.session_state.get("authenticated"):
 if "workspace" not in st.session_state:st.session_state.workspace=SessionWorkspace()
 if not hasattr(st.session_state.workspace,"normalized_video"):
     st.session_state.workspace.close();st.session_state.workspace=SessionWorkspace()
+if not getattr(st.session_state.workspace,'supports_person_selection',False):
+    st.session_state.workspace=SessionWorkspace.upgrade(st.session_state.workspace)
 workspace=st.session_state.workspace
 if st.session_state.get('_app_revision')!=APP_REVISION:
     workspace.clear_result()
@@ -67,15 +70,25 @@ with controls:
         side=st.selectbox("Extremidad",["automatica","izquierda","derecha"],format_func=lambda x:"Automática: lados activos" if x=="automatica" else x.capitalize()+" de la persona")
         st.caption("El resultado indica también el lado en la imagen para evitar confusiones.")
         rotation=st.selectbox("Orientación del video",["auto",0,90,-90,180],format_func=lambda x:{"auto":"Automática",0:"Sin giro adicional",90:"90° a la derecha",-90:"90° a la izquierda",180:"180°"}[x])
+        choose_person=st.checkbox('Elegir persona (si aparecen varias)')
+        person_target=None
+        if choose_person:
+            st.caption('Coloca la marca en el centro del tronco de la persona que quieres revisar.')
+            px=st.slider('Posición horizontal (%)',5,95,50)
+            py=st.slider('Posición vertical (%)',5,95,40)
+            person_target=[px/100.,py/100.]
     upload=st.file_uploader("Video",type=["mp4","mov","avi","webm","m4v"])
-    try:workspace.set_input(upload.getvalue() if upload else None,Path(upload.name).suffix if upload else ".mp4",exercise,side,target,rotation)
+    try:workspace.set_input(upload.getvalue() if upload else None,Path(upload.name).suffix if upload else ".mp4",exercise,side,target,rotation,person_target)
     except ValueError as error:st.error(str(error))
     if upload:st.video(upload)
+    if workspace.video and person_target is not None:
+        selection=selection_preview(workspace.video,person_target)
+        if selection is not None:st.image(selection,caption='Marca de la persona seleccionada',use_container_width=True)
     if st.button("Analizar video",type="primary",disabled=workspace.video is None,use_container_width=True):
         workspace.clear_result()
         with st.spinner("Analizando tu técnica…"):
             try:
-                workspace.result=evaluate(workspace.video,exercise,side,target,rotation=rotation)
+                workspace.result=evaluate(workspace.video,exercise,side,target,rotation=rotation,person_target=person_target)
                 if workspace.result.get('feedback_version')!=POLICY_VERSION:
                     workspace.clear_result()
                     raise ValueError('El motor cargado pertenece a una versión anterior. Reinicia la app con Reboot app y vuelve a analizar.')
@@ -106,6 +119,14 @@ with output:
             st.write("**Qué corregir:** "+error["name"])
             st.write(error["advice"])
             st.write("**Qué puede provocar:** "+error["consequence"])
+            if error.get('scope')=='postura':st.caption(f"Postura observada entre {error['start_time']:.1f} y {error['end_time']:.1f} s; no se cuenta como una repetición.")
+        observations=result.get('posture_observations',[])
+        if observations:
+            with st.expander('Posturas visibles revisadas'):
+                st.caption('Estos tramos revisan alineación. No califican por sí solos el recorrido completo.')
+                for observation in observations:
+                    names='; '.join(c['name']+(' · a corregir' if c['status']=='fuera_de_rango' else ' · sin fallo medido') for c in observation['checks'])
+                    st.write(f"{observation['start_time']:.1f}–{observation['end_time']:.1f} s: {names}")
         st.caption("Revisión por repetición: los criterios medidos y la clasificación del video se muestran por separado.")
         labels=count_labels(result)
         a,b,c=st.columns(3);a.metric(labels[0],result["counts"]["verde"]);b.metric(labels[1],result["counts"]["rojo"]);c.metric(labels[2],result["counts"]["amarillo"])
