@@ -9,6 +9,7 @@ except ImportError:
     ROUTER_CONTEXT=False
 from squat_alignment import add_alignment
 from decision_policy import apply_policy
+from repetition_quality import repair_repetition_quality
 from video_orientation import inferred_rotation,rotate_video
 from frontal_quality import repair_frontal_projection,predict_resolved_frontal
 from posture_review import add_posture_observations,reading_summary
@@ -39,7 +40,7 @@ def evaluate(path,exercise,side="automatica",target=None,rotation="auto",person_
         result['sample']['trainable']=False
     result["model"]=model
     result.update(analysis_video=str(analysis_video),orientation_rotation=turn)
-    return apply_policy(reading_summary(add_posture_observations(add_alignment(result))))
+    return apply_policy(reading_summary(add_posture_observations(add_alignment(repair_repetition_quality(result)))))
 
 def diagnostic(result):
     import math
