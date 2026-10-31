@@ -59,7 +59,7 @@ with st.sidebar:
     st.title("MOVEAI");st.caption("Revisa tu técnica")
     st.caption(f"Versión {APP_REVISION}")
     st.write("Graba el cuerpo y la extremidad activa durante el inicio y el retorno. Hasta 60 segundos.")
-    st.caption("Sentadilla: de frente para revisar rodillas y pies; de lado para revisar el recorrido. Curl: brazo activo visible. Press de hombros: hombros, codos, manos y tronco visibles; preferentemente frontal o diagonal.")
+    st.caption("Sentadilla: de frente para revisar rodillas y pies; de lado para revisar el recorrido. Curl: brazo activo visible. Press de hombros: de frente o en diagonal.")
     if st.button("Cerrar sesión"):workspace.close();st.session_state.clear();st.rerun()
 st.title("Revisa tu técnica")
 st.write("Sube tu video y revisa el resultado de cada repetición.")
@@ -71,7 +71,6 @@ with controls:
     video_key='r11_'+(hashlib.sha256(uploaded_data).hexdigest()[:16] if uploaded_data else 'empty')+'_'+exercise
     with st.expander("Ajustar ejercicio y toma"):
         target=st.slider("Elevación objetivo del brazo (grados)" if exercise=='shoulder_press' else "Recorrido objetivo (grados)",120 if exercise=='shoulder_press' else 40,170,TARGETS[exercise],5,key=video_key+'_target')
-        if exercise=='shoulder_press':st.caption('Press con mancuernas, de pie o sentado. La meta describe la elevación del brazo; el codo se flexiona abajo y se extiende arriba.')
         side=st.selectbox("Extremidad",["automatica","izquierda","derecha"],format_func=lambda x:"Automática: lados activos" if x=="automatica" else x.capitalize()+" de la persona",key=video_key+'_side')
         st.caption("El resultado indica también el lado en la imagen para evitar confusiones.")
         rotation=st.selectbox("Orientación del video",["auto",0,90,-90,180],format_func=lambda x:{"auto":"Automática",0:"Sin giro adicional",90:"90° a la derecha",-90:"90° a la izquierda",180:"180°"}[x],key=video_key+'_rotation')
@@ -114,13 +113,6 @@ with output:
     else:
         {"verde":st.success,"rojo":st.error,"amarillo":st.warning}[result["color"]](result["title"] if result.get("feedback_version") else RESULT_LABELS[result["color"]])
         st.write(result_explanation(result))
-        if result.get('exercise')=='shoulder_press':
-            st.caption('Resultado de los criterios visibles del press. No incluye una probabilidad de un clasificador entrenado.')
-            summary=result.get('assessment_summary',{})
-            if summary.get('complete_cycles'):
-                st.write(f"Se evaluaron {summary['assessed_complete_cycles']} de {summary['complete_cycles']} ciclos completos.")
-                st.caption(f"{summary['passing_cycles']} sin fallos medidos · {summary['flagged_cycles']} a corregir · {summary['unassessed_complete_cycles']} sin lectura suficiente. La cobertura no es un porcentaje de acierto.")
-            for tip in result.get('capture_guidance',[]):st.caption(tip)
         if result["color"]=="rojo":st.write("Pide a un profesional que revise tu técnica.")
         reported=set()
         for error in result.get("errors",[]):
@@ -151,6 +143,10 @@ with output:
                 for x in rep["checks"]:
                     if x["status"] in ["fuera_de_rango","limite"]:st.write("• "+x["advice"])
         with st.expander("Ver detalles del análisis"):
+            summary=result.get('assessment_summary',{})
+            if summary.get('complete_cycles'):
+                st.caption(f"Ciclos completos revisados: {summary['assessed_complete_cycles']} de {summary['complete_cycles']}.")
+            for tip in result.get('capture_guidance',[]):st.caption(tip)
             labels=count_labels(result)
             a,b,c=st.columns(3);a.metric(labels[0],result['counts']['verde']);b.metric(labels[1],result['counts']['rojo']);c.metric(labels[2],result['counts']['amarillo'])
             st.caption('Los contadores describen criterios por repetición. El clasificador califica el video completo.')
@@ -167,7 +163,7 @@ with output:
             if result["model"]["available"]:
                 st.write(f'Estimación del modelo: {result["model"]["p_correct"]:.1%} de ejecución correcta.')
                 st.caption(result["model"]["scope"])
-            else:st.caption(result["model"]["reason"])
+            else:st.caption("El resultado se basa en los criterios medidos." if result.get("exercise")=="shoulder_press" else result["model"]["reason"])
             if reps:
                 preview=annotated(result["sample"],rep)
                 if preview is not None:st.image(preview,caption=f'Repetición {chosen+1}',use_container_width=True)
@@ -197,6 +193,6 @@ with st.expander("Ayudar a mejorar MOVEAI (opcional)"):
                 save_review(workspace.video,result["sample"],exercise,subject,label=="Correcta",reviewer,consent,reviewed,workspace.reviews)
                 st.session_state.review_export=export_reviews(workspace.reviews).read_bytes();st.success("Guardada. Descarga el paquete para conservarla.")
             except ValueError as error:st.error(str(error))
-    else:st.caption('Las revisiones de press no se incorporan al entrenamiento anterior. Requieren un procedimiento propio.' if result and result.get('exercise')=='shoulder_press' else 'Primero analiza un video con una lectura suficiente.')
+    else:st.caption('No hay una revisión disponible para este análisis.' if result else 'Primero analiza un video con una lectura suficiente.')
     if st.session_state.get("review_export"):st.download_button("Descargar revisiones",st.session_state.review_export,file_name="moveai_revisiones_rgb.zip",on_click="ignore")
 st.caption("MOVEAI revisa los movimientos visibles en tu video.")
