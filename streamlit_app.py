@@ -6,7 +6,7 @@ import hashlib
 from pathlib import Path
 import pandas as pd
 import streamlit as st
-from exercise_registry import EXERCISES,TARGETS
+from geometry import EXERCISES,TARGETS
 from web_session import SessionWorkspace
 from moveai_core import evaluate,diagnostic
 from preview import annotated
@@ -59,7 +59,7 @@ with st.sidebar:
     st.title("MOVEAI");st.caption("Revisa tu técnica")
     st.caption(f"Versión {APP_REVISION}")
     st.write("Graba el cuerpo y la extremidad activa durante el inicio y el retorno. Hasta 60 segundos.")
-    st.caption("Sentadilla: de frente para revisar rodillas y pies; de lado para revisar el recorrido. Curl: brazo activo visible. Press de hombros: de frente o en diagonal.")
+    st.caption("Sentadilla: de frente para revisar rodillas y pies; de lado para revisar el recorrido. Curl: brazo activo visible. Elevación lateral: frontal.")
     if st.button("Cerrar sesión"):workspace.close();st.session_state.clear();st.rerun()
 st.title("Revisa tu técnica")
 st.write("Sube tu video y revisa el resultado de cada repetición.")
@@ -68,9 +68,9 @@ with controls:
     exercise=st.selectbox("Ejercicio",list(EXERCISES),format_func=EXERCISES.get)
     upload=st.file_uploader("Video",type=["mp4","mov","avi","webm","m4v"])
     uploaded_data=upload.getvalue() if upload else None
-    video_key='r11_'+(hashlib.sha256(uploaded_data).hexdigest()[:16] if uploaded_data else 'empty')+'_'+exercise
+    video_key='r8_'+(hashlib.sha256(uploaded_data).hexdigest()[:16] if uploaded_data else 'empty')+'_'+exercise
     with st.expander("Ajustar ejercicio y toma"):
-        target=st.slider("Elevación objetivo del brazo (grados)" if exercise=='shoulder_press' else "Recorrido objetivo (grados)",120 if exercise=='shoulder_press' else 40,170,TARGETS[exercise],5,key=video_key+'_target')
+        target=st.slider("Recorrido objetivo (grados)",40,170,TARGETS[exercise],5,key=video_key+'_target')
         side=st.selectbox("Extremidad",["automatica","izquierda","derecha"],format_func=lambda x:"Automática: lados activos" if x=="automatica" else x.capitalize()+" de la persona",key=video_key+'_side')
         st.caption("El resultado indica también el lado en la imagen para evitar confusiones.")
         rotation=st.selectbox("Orientación del video",["auto",0,90,-90,180],format_func=lambda x:{"auto":"Automática",0:"Sin giro adicional",90:"90° a la derecha",-90:"90° a la izquierda",180:"180°"}[x],key=video_key+'_rotation')
@@ -143,10 +143,6 @@ with output:
                 for x in rep["checks"]:
                     if x["status"] in ["fuera_de_rango","limite"]:st.write("• "+x["advice"])
         with st.expander("Ver detalles del análisis"):
-            summary=result.get('assessment_summary',{})
-            if summary.get('complete_cycles'):
-                st.caption(f"Ciclos completos revisados: {summary['assessed_complete_cycles']} de {summary['complete_cycles']}.")
-            for tip in result.get('capture_guidance',[]):st.caption(tip)
             labels=count_labels(result)
             a,b,c=st.columns(3);a.metric(labels[0],result['counts']['verde']);b.metric(labels[1],result['counts']['rojo']);c.metric(labels[2],result['counts']['amarillo'])
             st.caption('Los contadores describen criterios por repetición. El clasificador califica el video completo.')
@@ -163,13 +159,13 @@ with output:
             if result["model"]["available"]:
                 st.write(f'Estimación del modelo: {result["model"]["p_correct"]:.1%} de ejecución correcta.')
                 st.caption(result["model"]["scope"])
-            else:st.caption("El resultado se basa en los criterios medidos." if result.get("exercise")=="shoulder_press" else result["model"]["reason"])
+            else:st.caption(result["model"]["reason"])
             if reps:
                 preview=annotated(result["sample"],rep)
                 if preview is not None:st.image(preview,caption=f'Repetición {chosen+1}',use_container_width=True)
                 st.caption(f'Repetición {chosen+1} · {rep["start_time"]:.1f}–{rep["end_time"]:.1f} s · {rep["screen_side"]}')
                 words={"en_rango":"Cumple","fuera_de_rango":"A corregir","limite":"Cerca del límite","no_evaluable":"Sin evaluar"}
-                st.dataframe([{"Criterio":x["name"],"Medida":x["value"],"Unidad":x.get("unit","°"),"Referencia":("≥ " if x["direction"]=="min" else "≤ ")+str(x["reference"]),"Resultado":"Desviación breve por confirmar" if x.get('evidence_status')=='not_sustained' else "Estimación por confirmar" if x.get('evidence_status')=='uncertain_3d' else words[x["status"]]} for x in rep["checks"]],hide_index=True,use_container_width=True)
+                st.dataframe([{"Criterio":x["name"],"Medida":x["value"],"Unidad":x.get("unit","°"),"Referencia":("≥ " if x["direction"]=="min" else "≤ ")+str(x["reference"]),"Resultado":"Estimación por confirmar" if x.get('evidence_status')=='uncertain_3d' else words[x["status"]]} for x in rep["checks"]],hide_index=True,use_container_width=True)
             chart=pd.DataFrame({"Tiempo (s)":result["sample"]["times"]})
             for t in result["tracks"]:chart[t["screen_side"]]=t["series"]
             if len(chart.columns)>1:st.line_chart(chart.set_index("Tiempo (s)"),y_label="Ángulo (°)")
@@ -193,6 +189,6 @@ with st.expander("Ayudar a mejorar MOVEAI (opcional)"):
                 save_review(workspace.video,result["sample"],exercise,subject,label=="Correcta",reviewer,consent,reviewed,workspace.reviews)
                 st.session_state.review_export=export_reviews(workspace.reviews).read_bytes();st.success("Guardada. Descarga el paquete para conservarla.")
             except ValueError as error:st.error(str(error))
-    else:st.caption('No hay una revisión disponible para este análisis.' if result else 'Primero analiza un video con una lectura suficiente.')
+    else:st.caption("Primero analiza un video con una lectura suficiente.")
     if st.session_state.get("review_export"):st.download_button("Descargar revisiones",st.session_state.review_export,file_name="moveai_revisiones_rgb.zip",on_click="ignore")
 st.caption("MOVEAI revisa los movimientos visibles en tu video.")

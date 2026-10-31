@@ -1,7 +1,3 @@
-# Nota de actualización R11
-
-La aplicación añade el módulo press_analysis.py para press de hombros con mancuernas, con reglas específicas y sin clasificador supervisado aprobado. El protocolo que sigue documenta los experimentos originales y no constituye una validación de ese módulo nuevo. La interfaz fue actualizada para sustituir la opción anterior de elevación lateral; la conservación literal de widgets descrita en el protocolo corresponde a la versión anterior. Los pesos y módulos de características originales se mantienen intactos. La prueba funcional del módulo actual está en press_validation.json, con sus discrepancias y casos sin lectura.
-
 # MoveAI: protocolo experimental RGB y redes temporales
 
 Autores: Bastian Ignacio Vejar Mariqueo y Sebastian Alonso Rivera Ibaceta. Profesor guía: John Henry Rios Griego. Universidad Bernardo O'Higgins, Escuela de Ciencias Digitales y Tecnologías Avanzadas.
@@ -49,8 +45,3 @@ Filtro de piloto de red: ejecución completa modo tesis sin limitar descarga; BA
 ## Reproducibilidad y limitaciones
 
 La fuente, pesos, representación y particiones tienen hashes/versiones; los pesos se guardan en NPZ sin pickle. La descarga y caché permiten reanudar; un experimento se identifica por configuración y hashes de datos/código. Un modo rápido es sólo comprobación de ejecución y nunca habilita redes para el piloto. Se conservan exclusiones por mala lectura, dominio monocular, pocos participantes, posible variación de calidad de etiquetas y dependencia de cámara/vista. Se requieren anotaciones de entrenadores y validación externa para sostener errores específicos por repetición o aplicaciones clínicas. Las redes no se consideran superiores hasta ejecutar la comparación.
-
-
-Actualización conservadora R11: se requieren al menos dos muestras medidas en inicio, fase superior y retorno, además de conservar visibilidad >=0,55 y lectura de al menos el 80% de la repetición. Una desviación fuera de tolerancia debe mantenerse al menos 0,25 s en muestras consecutivas para considerarse un fallo firme. Una desviación breve queda registrada para confirmar y nunca se convierte por ese motivo en verde. La app muestra el número de ciclos revisados y sus resultados aunque no califique el video completo. No se aplica voto mayoritario ni se ocultan ciclos sin lectura.
-
-Comparación de desarrollo sobre los mismos 150 videos: las falsas alarmas frente a good/bad bajaron de 18 a 12 y las aprobaciones incorrectas de 6 a 5, sin nuevos casos de esos errores. Los videos sin conclusión global aumentaron de 65 a 81; 47 de estos 81 contienen resultados locales evaluables. Se afirma menos para evitar errores. Estas cifras no prueban una mejora de generalización ni certifican lesiones o mediciones angulares. La alternativa de conteo que añadía un nuevo caso de cada error fue descartada.
