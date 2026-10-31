@@ -1,0 +1,56 @@
+# Nota de actualización R11
+
+La aplicación añade el módulo press_analysis.py para press de hombros con mancuernas, con reglas específicas y sin clasificador supervisado aprobado. El protocolo que sigue documenta los experimentos originales y no constituye una validación de ese módulo nuevo. La interfaz fue actualizada para sustituir la opción anterior de elevación lateral; la conservación literal de widgets descrita en el protocolo corresponde a la versión anterior. Los pesos y módulos de características originales se mantienen intactos. La prueba funcional del módulo actual está en press_validation.json, con sus discrepancias y casos sin lectura.
+
+# MoveAI: protocolo experimental RGB y redes temporales
+
+Autores: Bastian Ignacio Vejar Mariqueo y Sebastian Alonso Rivera Ibaceta. Profesor guía: John Henry Rios Griego. Universidad Bernardo O'Higgins, Escuela de Ciencias Digitales y Tecnologías Avanzadas.
+
+## Pregunta experimental
+
+¿GRU, LSTM o una variante simplificada de ST-GCN mejoran la clasificación binaria de videos con técnica good/bad frente a Random Forest, Extra Trees, SVM RBF y regresión logística, al evaluar personas no usadas para entrenar?
+
+## Dataset y unidad de evaluación
+
+Mendeley Data, DOI 10.17632/kgbb3yn47p.3, versión 3, publicada el 10 de agosto de 2026. Fuente RGB de 26 sujetos y tres vistas. Se descargan sólo los MP4 de curl, sentadilla, flexión de brazos y press de hombros de la organización Exercise Quality-wise. La carpeta shoulder representa press según la descripción oficial; no elevación lateral. Las tres organizaciones son copias de los mismos videos: se usa sólo una y se deduplica por SHA-256. Se registra CRC de cada entrada, identidad, vista, clase, licencia CC BY 4.0 y exclusiones. Una etiqueta good/bad identifica el video completo; no proporciona el tipo de error ni etiquetas por repetición. La identificación del ejercicio es conocida, no un problema de reconocimiento automático.
+
+## Extracción y representación
+
+Se conserva pose.py de RGB 4: MediaPipe Pose Landmarker Full 0.10.21, 33 landmarks, delegado CPU, imagen de lado máximo 720 px, archivo de pose verificado por SHA-256. Se procesa video a su FPS nativo con stride ceil(FPS/8): un video a 30 FPS entrega 7.5 muestras/s, no 30 estimaciones de pose/s. Los tiempos se calculan desde la posición de frame. Coordenadas world monoculares, centradas en cadera y escaladas por mediana del torso; coordenadas image ajustadas a la relación ancho/alto. No son mediciones 3D de laboratorio.
+
+GRU/LSTM/ST-GCN comparten un tensor de 64 instantes × 33 articulaciones × 10 canales: xyz world, xy image, visibilidad, dos canales angulares (world/image) y dos indicadores de validez angular. Los ángulos de hombros, codos, caderas y rodillas se obtienen mediante producto punto; flexión de codo/rodilla/cadera = 180° − ángulo interno. El remuestreo temporal selecciona el frame más cercano en tiempo normalizado; no interpola puntos ausentes. Una articulación es válida si visibilidad ≥0.55, pose detectada, ausencia de ambigüedad multipersona y coordenadas finitas. La normalización se ajusta únicamente sobre entradas válidas de entrenamiento; los valores ausentes permanecen en cero con indicadores explícitos. No se normaliza usando datos de prueba.
+
+GRU y LSTM: proyección 330→h, capa recurrente unidireccional, pooling temporal con máscara y salida binaria. ST-GCN simplificada: adyacencia fija simétrica con autoconexiones, normalizada como D^−1/2(A+I)D^−1/2; tres bloques de convolución de grafo y temporal, GroupNorm, conexiones residuales y pooling de articulaciones visibles. No reproduce exactamente las particiones espaciales ni todas las decisiones del ST-GCN original de Yan et al. (2018).
+
+Los cuatro baselines usan las 184 variables del extractor RGB 4 para curl/sentadilla y 1056 resúmenes de landmarks para flexión/press: percentiles 10,50,90 y desviación estándar de los ocho canales de datos en cada una de las 33 articulaciones. El benchmark controla videos, sujetos y etiquetas; las representaciones difieren entre modelos clásicos y neuronales. Una mejora no demuestra que sólo la arquitectura explique el efecto. No se realiza búsqueda exhaustiva: GRU/LSTM/ST-GCN comparan h=32 y h=64, dropout=0.2, AdamW lr=0.001, weight_decay=0.001, batch=16, BCE ponderada y clipping de gradiente=1. RF:160 árboles/profundidad6/hoja3; Extra Trees:240/profundidad8/hoja2; SVM:C=1,10; logística:C=0.1,1. SVM/logística ajustan StandardScaler sólo en entrenamiento.
+
+## Particiones y selección
+
+Cinco folds externos de StratifiedGroupKFold por participante. Todos los videos y vistas de una persona permanecen en el mismo fold. La persona mendeley_rgb:1 se excluye del benchmark y ajuste final porque RGB 4 la utilizó para desarrollo previo; esta decisión se guarda en configuración. Dentro de entrenamiento externo se reserva un fold agrupado de cinco (aprox.20% de sujetos) sólo para calibración. El resto se divide en tres folds internos para seleccionar configuración por AUC media. Las redes usan early stopping por AUC interna, máximo60 épocas/paciencia10; el modelo de cada fold externo se reentrena sobre todo el desarrollo durante la mediana de épocas seleccionadas internamente. No usa la prueba externa para parar ni elegir configuración. Una regresión logística monótona calibra los scores sobre los sujetos de calibración reservados. Si la pendiente resulta no positiva, se usa una probabilidad constante igual a la prevalencia de calibración y se impide el despliegue de esa red.
+
+Se publican resultados por familia y dos procedimientos de selección: seleccion_neuronal y seleccion_clasica eligen la mejor familia de su grupo por AUC interna, antes de evaluar el fold externo. Esto permite evaluar la selección sin elegir el ganador a partir de su propio test. La selección final de red se hace de nuevo con particiones internas de todos los sujetos elegibles; conserva sujetos de calibración separados. El modelo final no tiene una cohorte externa independiente. El entrenamiento por defecto usa semilla42; la semilla puede cambiar para un experimento adicional guardado en otra carpeta. No se afirma variabilidad entre semillas sin ejecutar réplicas.
+
+## Métricas y evidencia
+
+Clase positiva: bad (1). Umbral de decisión:0.5. Se exportan exactitud, balanced accuracy=(sensibilidad bad+especificidad good)/2, F1 macro, precisión/recall bad, ROC-AUC, average precision, Brier, matriz de confusión y métricas por vista/fold. Confianza operativa: P(good)≥0.75 o P(bad)≥0.75; el intervalo restante es incierto. IC95% de BA y diferencia pareada neural−clásico mediante 2000 remuestreos por participante, conservando juntas todas sus vistas y videos. Estos IC son descriptivos y no incluyen incertidumbre de reentrenamiento. Se guardan predicciones OOF identificadas, asignación de sujetos, curvas, configuraciones, épocas, parámetros neuronales, tiempos y versiones. Latencia de inferencia sobre tensors excluye extracción RGB y no demuestra procesamiento a 30 FPS.
+
+## Cinemática, segmentación y SHAP
+
+La segmentación detecta ciclos con histéresis sobre series suavizadas de flexión/extensión; exige amplitud≥20°, ventanas observables y retorno. ROM descriptivo por ciclo = P95−P5, robusto frente a extremos. Las fases crecientes/decrecientes se asocian aproximadamente a concéntrica/excéntrica según ejercicio; no se miden contracción muscular, fuerza ni carga. Asimetría angular dinámica = mediana(100|θL−θR|/max((|θL|+|θR|)/2,10°)) sobre pares visibles. El piso10° evita denominadores pequeños; el índice no demuestra defecto y no es comparable sin controlar tarea, especialmente curl alternado. No se reporta exactitud de detección por repetición sin anotaciones temporales externas.
+
+SHAP KernelExplainer agrupa ocho curvas articulares (canales angulares world/image reemplazados juntos). Referencia: mediana angular por instante sólo de entrenamiento del fold; coordenadas y máscaras del video permanecen fijas. Se explican videos de test con el modelo externo correspondiente y se verifica aditividad. Es una explicación condicional de canales redundantes, no una atribución causal ni una pose contrafactual necesariamente realizable. SHAP no identifica por sí solo la repetición defectuosa.
+
+## Integración con la página
+
+streamlit_app.py y .streamlit/config.toml se preservan byte por byte, verificando SHA-256. Se mantienen login, selección de ejercicios, slider de recorrido, carga de video, colores, overlays, criterios por repetición, gráficos, diagnósticos y revisión humana. El cambio está en el backend: una red compatible puede aportar la probabilidad global de curl/sentadilla si pasa el filtro de piloto; en otro caso se usa el detector RGB 4 original. Flexión y press se estudian en notebook, sin cambiar los ejercicios visibles en la página; elevación lateral y zancada conservan las reglas existentes.
+
+Filtro de piloto de red: ejecución completa modo tesis sin limitar descarga; BA≥0.70, sensibilidad y especificidad≥0.65, BA no inferior al procedimiento clásico, ≥15 videos verdes de ≥10 personas, precisión verde fusionada≥0.75 y calibración con pendiente positiva. Estos umbrales son una decisión de ingeniería basada en validación interna, no certificación clínica. La página fusiona evidencia del modelo y criterios por repetición: ambas capas tienen alcances diferentes. Las advertencias biomecánicas se describen como orientación heurística y no como predicción validada de lesiones. No se estiman momentos ni cargas articulares.
+
+## Reproducibilidad y limitaciones
+
+La fuente, pesos, representación y particiones tienen hashes/versiones; los pesos se guardan en NPZ sin pickle. La descarga y caché permiten reanudar; un experimento se identifica por configuración y hashes de datos/código. Un modo rápido es sólo comprobación de ejecución y nunca habilita redes para el piloto. Se conservan exclusiones por mala lectura, dominio monocular, pocos participantes, posible variación de calidad de etiquetas y dependencia de cámara/vista. Se requieren anotaciones de entrenadores y validación externa para sostener errores específicos por repetición o aplicaciones clínicas. Las redes no se consideran superiores hasta ejecutar la comparación.
+
+
+Actualización conservadora R11: se requieren al menos dos muestras medidas en inicio, fase superior y retorno, además de conservar visibilidad >=0,55 y lectura de al menos el 80% de la repetición. Una desviación fuera de tolerancia debe mantenerse al menos 0,25 s en muestras consecutivas para considerarse un fallo firme. Una desviación breve queda registrada para confirmar y nunca se convierte por ese motivo en verde. La app muestra el número de ciclos revisados y sus resultados aunque no califique el video completo. No se aplica voto mayoritario ni se ocultan ciclos sin lectura.
+
+Comparación de desarrollo sobre los mismos 150 videos: las falsas alarmas frente a good/bad bajaron de 18 a 12 y las aprobaciones incorrectas de 6 a 5, sin nuevos casos de esos errores. Los videos sin conclusión global aumentaron de 65 a 81; 47 de estos 81 contienen resultados locales evaluables. Se afirma menos para evitar errores. Estas cifras no prueban una mejora de generalización ni certifican lesiones o mediciones angulares. La alternativa de conteo que añadía un nuevo caso de cada error fue descartada.

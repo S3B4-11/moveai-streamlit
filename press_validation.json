@@ -1,0 +1,4252 @@
+{
+  "version": "2026.10.30-r11",
+  "rule_version": "press_rgb_v2",
+  "scope": "Prueba funcional en datos utilizados durante el desarrollo; no es una validación independiente ni certifica umbrales clínicos.",
+  "source": {
+    "doi": "10.17632/kgbb3yn47p.3",
+    "archive": "Dataset Exercise Quality-wise.zip",
+    "folder": "shoulder",
+    "videos": 150,
+    "subjects": 25,
+    "good": 75,
+    "bad": 75
+  },
+  "software_tests": {
+    "passed": 95,
+    "failed": 0,
+    "scope": "Pruebas funcionales, controles de evidencia temporal e interfaz; no es exactitud biomecánica."
+  },
+  "functional": {
+    "n": 150,
+    "states": {
+      "unreadable": 81,
+      "incorrect": 39,
+      "correct": 30
+    },
+    "label_status": {
+      "incorrect -> unreadable": 43,
+      "incorrect -> incorrect": 27,
+      "correct -> unreadable": 38,
+      "correct -> correct": 25,
+      "correct -> incorrect": 12,
+      "incorrect -> correct": 5
+    },
+    "scope": "Prueba funcional en datos utilizados durante el desarrollo; no es una validación independiente ni certifica umbrales clínicos.",
+    "target": 150
+  },
+  "comparison": {
+    "scope": "Comparación de desarrollo sobre videos ya utilizados; no prueba independiente de generalización.",
+    "baseline": {
+      "n": 150,
+      "matches": 61,
+      "false_alerts": 18,
+      "false_acceptances": 6,
+      "unreadable": 65,
+      "states": {
+        "incorrect": 53,
+        "unreadable": 65,
+        "correct": 32
+      }
+    },
+    "candidate": {
+      "n": 150,
+      "matches": 52,
+      "false_alerts": 12,
+      "false_acceptances": 5,
+      "unreadable": 81,
+      "states": {
+        "unreadable": 81,
+        "incorrect": 39,
+        "correct": 30
+      }
+    },
+    "new_false_alerts": [],
+    "new_false_acceptances": [],
+    "no_new_observed_misclassifications": true,
+    "transitions": {
+      "incorrect -> unreadable": 14,
+      "incorrect -> incorrect": 39,
+      "unreadable -> unreadable": 65,
+      "correct -> unreadable": 2,
+      "correct -> correct": 30
+    }
+  },
+  "parameters": {
+    "target_arm_elevation": 150,
+    "arm_peak_reference": 140,
+    "arm_tolerance": 10,
+    "top_elbow_flexion_max": 30,
+    "top_elbow_tolerance": 12,
+    "elbow_change_min": 30,
+    "elbow_change_tolerance": 10,
+    "return_arm_max": 115,
+    "return_arm_tolerance": 10,
+    "return_elbow_flexion_min": 45,
+    "return_elbow_tolerance": 12,
+    "trunk_change_max": 20,
+    "trunk_tolerance": 8,
+    "landmark_visibility_min": 0.55,
+    "repetition_coverage_min": 0.8,
+    "phase_min_measured_samples": 2,
+    "confirmed_deviation_min_duration_s": 0.25
+  },
+  "protected_files": {
+    "geometry.py": "3648d73b368a5724345c3ecb516d1978e7c7e5a9f8ac93483ce5fb57ebe5f50b",
+    "motion.py": "4a0fe9cf85e9535ae4122b8e36e228520c280950551d0fece573da74d90a2fb1",
+    "analysis.py": "d47b0b129de102dbdd15345a971a27a3a56bf9ffbb3f8fa7759424257a10e7b3",
+    "pose.py": "ab4724a1dba3ee628ac67c113592eec7e39be626151643fa8f9fcee939e3eb96",
+    "camera_model.py": "765b1aa6501bec115b916bd950327d029422cb207464b14339d9fa3f5a9ba97e",
+    "neural_features.py": "589248de6afe877b66712bfbc558286b890ffa54e9502a2dfc03672e0c8f755f",
+    "neural_models.py": "db5b08d7c233c3dace1192263352d1dd078d4df95ce34caa6ecaf0868f604ddb",
+    "feedback.py": "f5b9e33a996aa4b833228d80073dc0ff6057b6f7b1e386d3f7fb15a2e2a904dc",
+    "preview.py": "6079f1869e817dc08ce92f10d150700348934979aa1583229b3feb580fbeb9a4",
+    ".streamlit/config.toml": "607fee9b74c2ddcf1150781ed6629c066366936dff894aaa24d24083d217309a",
+    "assets/pose_landmarker_full.task": "4eaa5eb7a98365221087693fcc286334cf0858e2eb6e15b506aa4a7ecdcec4ad",
+    "camera_modelos/resumen_rgb.json": "32bb2ae979ee7751813b1d4789f10bb95e448650039fc9d917bdf55e30b18552",
+    "camera_modelos/squat/modelo.json": "c81daa5e64888d9793df7db4f1be39ec8ee62278b7bc8d34474be811df11f084",
+    "camera_modelos/squat/evaluacion_rgb.npz": "fc47e35935892d3b40ec82b1c11863944a7b1856666843f108401bcb5121273a",
+    "camera_modelos/squat/metricas.json": "7fb46a1e96c30db17bb8e7e101e067784843123d8c3a620d8ceeaf63774dd106",
+    "camera_modelos/elbow_flexion/modelo.json": "ecb45eb0c4dac8883cbf027b54fbd5833557ec213e460ab773038aeb9e1dc53e",
+    "camera_modelos/elbow_flexion/evaluacion_rgb.npz": "09a4db3b63e9898b0e95c978086925172548bec1397d3d83733580b8f5f3e667",
+    "camera_modelos/elbow_flexion/metricas.json": "45a88d146e7fa679003e56612f6af83a0fff9a30fac7da4f31f89960c3b9f05b",
+    "neural_modelos/push_up/model.json": "4953bae2a5b58650be6be0a7060258128b806a4394e08e61183b5a393ffe3881",
+    "neural_modelos/push_up/weights.npz": "218aeed4a2f150126a6d4d4cf976cb0a606f1d48c81f03f6a3ce197f37bb889b",
+    "neural_modelos/squat/model.json": "6466bb9076a471b179f2d71a7441da0aeff45958239eea5d40a95638027362d2",
+    "neural_modelos/squat/weights.npz": "9b599183115d08b2cb751cc76d2e3f9370154d42ca3168a99ab2a7a405487683",
+    "neural_modelos/elbow_flexion/model.json": "9423da92ea6db55161b2e5355ed4558a37a73b209a8e90d93fe81d226190a423",
+    "neural_modelos/elbow_flexion/weights.npz": "f2c8c8f52de85d97162fa417801c6c5082de49ca277f0175d770a944f97c641f",
+    "neural_modelos/shoulder_press/model.json": "5a4669a46b1d3f0b49206239efdba33043e3029bebf42e8f8c1306779ad99f98",
+    "neural_modelos/shoulder_press/weights.npz": "aa3d67b3febb4ef85efbf634bb65334161e586d4041fdbf4989884dc0bb064bb"
+  },
+  "code_sha256": {
+    "press_analysis.py": "27e9bf2718914282f2fb0bd67b0849e0613b2f6fb9434adb34c7a6f60fd5c6ef",
+    "press_quality.py": "05e8824f1feed48ecec1e86d670ae3e8520f83d961e833d345f20a10dc4d7371",
+    "moveai_core.py": "61551946cfa7313b069bc0489650cf5e46243c73cb1f3a65c4ea0650df3c7674",
+    "decision_policy.py": "8036397b33f92317e31d2c58ec4194a90c949bc3128912358603d24b7dc20cea",
+    "streamlit_app.py": "7c0f6cc822d215f923fb7baca37ac247f12ebb155e4255455c0ac5c5d503ef77",
+    "video_overlay.py": "0ef2e1473f25a2e6dadd694866adaf33314411ea5574a3ce679c132c9f0a334a"
+  },
+  "unreadable_by_view": {
+    "front": 13,
+    "side": 43,
+    "diagonal": 25
+  },
+  "partial_results_in_unreadable": 47,
+  "rejected_changes": [
+    {
+      "change": "Contar ciclos con máscara independiente de la muñeca",
+      "reason": "Añadía una falsa alarma y una aprobación incorrecta en casos sin ese error previo; no se incorpora.",
+      "new_false_alert": "subject_005_shoulder_good_diagonal.mp4",
+      "new_false_acceptance": "subject_023_shoulder_bad_side.mp4"
+    },
+    {
+      "change": "Exigir 80% en cada ventana corta además de la repetición",
+      "reason": "Excesiva abstención: 109/150. Se conserva el 80% en el ciclo y se requieren dos muestras reales en cada fase."
+    }
+  ],
+  "videos": [
+    {
+      "file": "subject_001_shoulder_bad_diagonal.mp4",
+      "label": "incorrect",
+      "status": "unreadable",
+      "counts": {
+        "verde": 9,
+        "rojo": 0,
+        "amarillo": 8
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 17,
+        "complete_cycles": 10,
+        "assessed_complete_cycles": 9,
+        "unassessed_complete_cycles": 1,
+        "incomplete_cycles": 7,
+        "assessed_fraction": 0.9,
+        "passing_cycles": 9,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Oclusión durante la repetición.": 3,
+        "Falta el inicio completo.": 2,
+        "Falta observar el retorno.": 2,
+        "Hay una desviación breve sin suficiente continuidad para confirmarla.": 1
+      }
+    },
+    {
+      "file": "subject_001_shoulder_bad_front.mp4",
+      "label": "incorrect",
+      "status": "incorrect",
+      "counts": {
+        "verde": 1,
+        "rojo": 1,
+        "amarillo": 3
+      },
+      "error_keys": [
+        "compensacion_tronco",
+        "press_cambio_codo",
+        "press_elevacion",
+        "press_retorno_codo"
+      ],
+      "assessment_summary": {
+        "total_cycles": 5,
+        "complete_cycles": 2,
+        "assessed_complete_cycles": 2,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 3,
+        "assessed_fraction": 1.0,
+        "passing_cycles": 1,
+        "flagged_cycles": 1,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Oclusión durante la repetición.": 1,
+        "Falta el inicio completo.": 1,
+        "Falta observar el retorno.": 1
+      }
+    },
+    {
+      "file": "subject_001_shoulder_bad_side.mp4",
+      "label": "incorrect",
+      "status": "unreadable",
+      "counts": {
+        "verde": 5,
+        "rojo": 0,
+        "amarillo": 8
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 13,
+        "complete_cycles": 9,
+        "assessed_complete_cycles": 5,
+        "unassessed_complete_cycles": 4,
+        "incomplete_cycles": 4,
+        "assessed_fraction": 0.5555555555555556,
+        "passing_cycles": 5,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 2,
+        "Oclusión durante la repetición.": 1,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 2,
+        "Faltan medidas fiables en inicio, retorno.": 1,
+        "Hay una desviación breve sin suficiente continuidad para confirmarla.": 1,
+        "Falta observar el retorno.": 1
+      }
+    },
+    {
+      "file": "subject_001_shoulder_good_diagonal.mp4",
+      "label": "correct",
+      "status": "unreadable",
+      "counts": {
+        "verde": 13,
+        "rojo": 0,
+        "amarillo": 3
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 16,
+        "complete_cycles": 15,
+        "assessed_complete_cycles": 13,
+        "unassessed_complete_cycles": 2,
+        "incomplete_cycles": 1,
+        "assessed_fraction": 0.8666666666666667,
+        "passing_cycles": 13,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Faltan medidas fiables en retorno.": 1,
+        "Hay una desviación breve sin suficiente continuidad para confirmarla.": 1,
+        "Falta observar el retorno.": 1
+      }
+    },
+    {
+      "file": "subject_001_shoulder_good_front.mp4",
+      "label": "correct",
+      "status": "unreadable",
+      "counts": {
+        "verde": 2,
+        "rojo": 0,
+        "amarillo": 16
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 18,
+        "complete_cycles": 9,
+        "assessed_complete_cycles": 2,
+        "unassessed_complete_cycles": 7,
+        "incomplete_cycles": 9,
+        "assessed_fraction": 0.2222222222222222,
+        "passing_cycles": 2,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 3,
+        "Falta el inicio completo.": 2,
+        "Hay una desviación breve sin suficiente continuidad para confirmarla.": 1,
+        "Oclusión durante la repetición.": 6,
+        "Faltan medidas fiables en retorno.": 1,
+        "Faltan medidas fiables en inicio, retorno.": 1,
+        "Faltan medidas fiables en inicio.": 1,
+        "Falta observar el retorno.": 1
+      }
+    },
+    {
+      "file": "subject_001_shoulder_good_side.mp4",
+      "label": "correct",
+      "status": "unreadable",
+      "counts": {
+        "verde": 0,
+        "rojo": 0,
+        "amarillo": 0
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 0,
+        "complete_cycles": 0,
+        "assessed_complete_cycles": 0,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 0,
+        "assessed_fraction": 0.0,
+        "passing_cycles": 0,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {}
+    },
+    {
+      "file": "subject_002_shoulder_bad_diagonal.mp4",
+      "label": "incorrect",
+      "status": "incorrect",
+      "counts": {
+        "verde": 11,
+        "rojo": 6,
+        "amarillo": 1
+      },
+      "error_keys": [
+        "press_elevacion",
+        "press_extension"
+      ],
+      "assessment_summary": {
+        "total_cycles": 18,
+        "complete_cycles": 17,
+        "assessed_complete_cycles": 17,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 1,
+        "assessed_fraction": 1.0,
+        "passing_cycles": 11,
+        "flagged_cycles": 6,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta observar el retorno.": 1
+      }
+    },
+    {
+      "file": "subject_002_shoulder_bad_front.mp4",
+      "label": "incorrect",
+      "status": "incorrect",
+      "counts": {
+        "verde": 9,
+        "rojo": 9,
+        "amarillo": 0
+      },
+      "error_keys": [
+        "press_elevacion",
+        "press_extension"
+      ],
+      "assessment_summary": {
+        "total_cycles": 18,
+        "complete_cycles": 18,
+        "assessed_complete_cycles": 18,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 0,
+        "assessed_fraction": 1.0,
+        "passing_cycles": 9,
+        "flagged_cycles": 9,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {}
+    },
+    {
+      "file": "subject_002_shoulder_bad_side.mp4",
+      "label": "incorrect",
+      "status": "unreadable",
+      "counts": {
+        "verde": 0,
+        "rojo": 0,
+        "amarillo": 0
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 0,
+        "complete_cycles": 0,
+        "assessed_complete_cycles": 0,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 0,
+        "assessed_fraction": 0.0,
+        "passing_cycles": 0,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {}
+    },
+    {
+      "file": "subject_002_shoulder_good_diagonal.mp4",
+      "label": "correct",
+      "status": "unreadable",
+      "counts": {
+        "verde": 12,
+        "rojo": 0,
+        "amarillo": 3
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 15,
+        "complete_cycles": 14,
+        "assessed_complete_cycles": 12,
+        "unassessed_complete_cycles": 2,
+        "incomplete_cycles": 1,
+        "assessed_fraction": 0.8571428571428571,
+        "passing_cycles": 12,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Faltan medidas fiables en inicio.": 2,
+        "Falta observar el retorno.": 1
+      }
+    },
+    {
+      "file": "subject_002_shoulder_good_front.mp4",
+      "label": "correct",
+      "status": "correct",
+      "counts": {
+        "verde": 11,
+        "rojo": 0,
+        "amarillo": 1
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 12,
+        "complete_cycles": 11,
+        "assessed_complete_cycles": 11,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 1,
+        "assessed_fraction": 1.0,
+        "passing_cycles": 11,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta observar el retorno.": 1
+      }
+    },
+    {
+      "file": "subject_002_shoulder_good_side.mp4",
+      "label": "correct",
+      "status": "unreadable",
+      "counts": {
+        "verde": 0,
+        "rojo": 0,
+        "amarillo": 7
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 7,
+        "complete_cycles": 1,
+        "assessed_complete_cycles": 0,
+        "unassessed_complete_cycles": 1,
+        "incomplete_cycles": 6,
+        "assessed_fraction": 0.0,
+        "passing_cycles": 0,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Oclusión durante la repetición.": 4,
+        "Falta el inicio completo.": 2,
+        "Faltan medidas fiables en inicio.": 1
+      }
+    },
+    {
+      "file": "subject_003_shoulder_bad_diagonal.mp4",
+      "label": "incorrect",
+      "status": "incorrect",
+      "counts": {
+        "verde": 3,
+        "rojo": 8,
+        "amarillo": 6
+      },
+      "error_keys": [
+        "press_elevacion",
+        "press_extension"
+      ],
+      "assessment_summary": {
+        "total_cycles": 17,
+        "complete_cycles": 14,
+        "assessed_complete_cycles": 11,
+        "unassessed_complete_cycles": 3,
+        "incomplete_cycles": 3,
+        "assessed_fraction": 0.7857142857142857,
+        "passing_cycles": 3,
+        "flagged_cycles": 8,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Hay una desviación breve sin suficiente continuidad para confirmarla.": 2,
+        "Falta el inicio completo.": 2,
+        "Faltan medidas fiables en inicio, fase_superior.": 1,
+        "Oclusión durante la repetición.": 1
+      }
+    },
+    {
+      "file": "subject_003_shoulder_bad_front.mp4",
+      "label": "incorrect",
+      "status": "incorrect",
+      "counts": {
+        "verde": 0,
+        "rojo": 23,
+        "amarillo": 0
+      },
+      "error_keys": [
+        "press_elevacion",
+        "press_extension"
+      ],
+      "assessment_summary": {
+        "total_cycles": 23,
+        "complete_cycles": 23,
+        "assessed_complete_cycles": 23,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 0,
+        "assessed_fraction": 1.0,
+        "passing_cycles": 0,
+        "flagged_cycles": 23,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {}
+    },
+    {
+      "file": "subject_003_shoulder_bad_side.mp4",
+      "label": "incorrect",
+      "status": "unreadable",
+      "counts": {
+        "verde": 0,
+        "rojo": 0,
+        "amarillo": 0
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 0,
+        "complete_cycles": 0,
+        "assessed_complete_cycles": 0,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 0,
+        "assessed_fraction": 0.0,
+        "passing_cycles": 0,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {}
+    },
+    {
+      "file": "subject_003_shoulder_good_diagonal.mp4",
+      "label": "correct",
+      "status": "unreadable",
+      "counts": {
+        "verde": 0,
+        "rojo": 0,
+        "amarillo": 0
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 0,
+        "complete_cycles": 0,
+        "assessed_complete_cycles": 0,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 0,
+        "assessed_fraction": 0.0,
+        "passing_cycles": 0,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {}
+    },
+    {
+      "file": "subject_003_shoulder_good_front.mp4",
+      "label": "correct",
+      "status": "incorrect",
+      "counts": {
+        "verde": 7,
+        "rojo": 1,
+        "amarillo": 2
+      },
+      "error_keys": [
+        "press_elevacion",
+        "press_extension"
+      ],
+      "assessment_summary": {
+        "total_cycles": 10,
+        "complete_cycles": 8,
+        "assessed_complete_cycles": 8,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 2,
+        "assessed_fraction": 1.0,
+        "passing_cycles": 7,
+        "flagged_cycles": 1,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 1,
+        "Falta observar el retorno.": 1
+      }
+    },
+    {
+      "file": "subject_003_shoulder_good_side.mp4",
+      "label": "correct",
+      "status": "correct",
+      "counts": {
+        "verde": 2,
+        "rojo": 0,
+        "amarillo": 4
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 6,
+        "complete_cycles": 2,
+        "assessed_complete_cycles": 2,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 4,
+        "assessed_fraction": 1.0,
+        "passing_cycles": 2,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 2,
+        "Oclusión durante la repetición.": 2
+      }
+    },
+    {
+      "file": "subject_004_shoulder_bad_diagonal.mp4",
+      "label": "incorrect",
+      "status": "unreadable",
+      "counts": {
+        "verde": 4,
+        "rojo": 0,
+        "amarillo": 11
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 15,
+        "complete_cycles": 6,
+        "assessed_complete_cycles": 4,
+        "unassessed_complete_cycles": 2,
+        "incomplete_cycles": 9,
+        "assessed_fraction": 0.6666666666666666,
+        "passing_cycles": 4,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Oclusión durante la repetición.": 7,
+        "Falta el inicio completo.": 2,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 2
+      }
+    },
+    {
+      "file": "subject_004_shoulder_bad_front.mp4",
+      "label": "incorrect",
+      "status": "correct",
+      "counts": {
+        "verde": 9,
+        "rojo": 0,
+        "amarillo": 2
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 11,
+        "complete_cycles": 9,
+        "assessed_complete_cycles": 9,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 2,
+        "assessed_fraction": 1.0,
+        "passing_cycles": 9,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Oclusión durante la repetición.": 1,
+        "Falta el inicio completo.": 1
+      }
+    },
+    {
+      "file": "subject_004_shoulder_bad_side.mp4",
+      "label": "incorrect",
+      "status": "incorrect",
+      "counts": {
+        "verde": 2,
+        "rojo": 1,
+        "amarillo": 10
+      },
+      "error_keys": [
+        "press_cambio_codo"
+      ],
+      "assessment_summary": {
+        "total_cycles": 13,
+        "complete_cycles": 5,
+        "assessed_complete_cycles": 3,
+        "unassessed_complete_cycles": 2,
+        "incomplete_cycles": 8,
+        "assessed_fraction": 0.6,
+        "passing_cycles": 2,
+        "flagged_cycles": 1,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Oclusión durante la repetición.": 5,
+        "Falta el inicio completo.": 3,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 2
+      }
+    },
+    {
+      "file": "subject_004_shoulder_good_diagonal.mp4",
+      "label": "correct",
+      "status": "unreadable",
+      "counts": {
+        "verde": 6,
+        "rojo": 0,
+        "amarillo": 6
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 12,
+        "complete_cycles": 10,
+        "assessed_complete_cycles": 6,
+        "unassessed_complete_cycles": 4,
+        "incomplete_cycles": 2,
+        "assessed_fraction": 0.6,
+        "passing_cycles": 6,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 1,
+        "Oclusión durante la repetición.": 1,
+        "Faltan medidas fiables en retorno.": 2,
+        "Faltan medidas fiables en inicio.": 1,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 1
+      }
+    },
+    {
+      "file": "subject_004_shoulder_good_front.mp4",
+      "label": "correct",
+      "status": "incorrect",
+      "counts": {
+        "verde": 12,
+        "rojo": 1,
+        "amarillo": 0
+      },
+      "error_keys": [
+        "press_extension"
+      ],
+      "assessment_summary": {
+        "total_cycles": 13,
+        "complete_cycles": 13,
+        "assessed_complete_cycles": 13,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 0,
+        "assessed_fraction": 1.0,
+        "passing_cycles": 12,
+        "flagged_cycles": 1,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {}
+    },
+    {
+      "file": "subject_004_shoulder_good_side.mp4",
+      "label": "correct",
+      "status": "unreadable",
+      "counts": {
+        "verde": 9,
+        "rojo": 0,
+        "amarillo": 2
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 11,
+        "complete_cycles": 10,
+        "assessed_complete_cycles": 9,
+        "unassessed_complete_cycles": 1,
+        "incomplete_cycles": 1,
+        "assessed_fraction": 0.9,
+        "passing_cycles": 9,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 1,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 1
+      }
+    },
+    {
+      "file": "subject_005_shoulder_bad_diagonal.mp4",
+      "label": "incorrect",
+      "status": "unreadable",
+      "counts": {
+        "verde": 10,
+        "rojo": 0,
+        "amarillo": 5
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 15,
+        "complete_cycles": 13,
+        "assessed_complete_cycles": 10,
+        "unassessed_complete_cycles": 3,
+        "incomplete_cycles": 2,
+        "assessed_fraction": 0.7692307692307693,
+        "passing_cycles": 10,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Hay una desviación breve sin suficiente continuidad para confirmarla.": 2,
+        "Oclusión durante la repetición.": 2,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 1
+      }
+    },
+    {
+      "file": "subject_005_shoulder_bad_front.mp4",
+      "label": "incorrect",
+      "status": "incorrect",
+      "counts": {
+        "verde": 9,
+        "rojo": 1,
+        "amarillo": 4
+      },
+      "error_keys": [
+        "press_extension"
+      ],
+      "assessment_summary": {
+        "total_cycles": 14,
+        "complete_cycles": 13,
+        "assessed_complete_cycles": 10,
+        "unassessed_complete_cycles": 3,
+        "incomplete_cycles": 1,
+        "assessed_fraction": 0.7692307692307693,
+        "passing_cycles": 9,
+        "flagged_cycles": 1,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 1,
+        "Hay una desviación breve sin suficiente continuidad para confirmarla.": 2,
+        "Faltan medidas fiables en inicio.": 1
+      }
+    },
+    {
+      "file": "subject_005_shoulder_bad_side.mp4",
+      "label": "incorrect",
+      "status": "unreadable",
+      "counts": {
+        "verde": 0,
+        "rojo": 0,
+        "amarillo": 0
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 0,
+        "complete_cycles": 0,
+        "assessed_complete_cycles": 0,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 0,
+        "assessed_fraction": 0.0,
+        "passing_cycles": 0,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {}
+    },
+    {
+      "file": "subject_005_shoulder_good_diagonal.mp4",
+      "label": "correct",
+      "status": "unreadable",
+      "counts": {
+        "verde": 12,
+        "rojo": 0,
+        "amarillo": 3
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 15,
+        "complete_cycles": 14,
+        "assessed_complete_cycles": 12,
+        "unassessed_complete_cycles": 2,
+        "incomplete_cycles": 1,
+        "assessed_fraction": 0.8571428571428571,
+        "passing_cycles": 12,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Oclusión durante la repetición.": 1,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 2
+      }
+    },
+    {
+      "file": "subject_005_shoulder_good_front.mp4",
+      "label": "correct",
+      "status": "correct",
+      "counts": {
+        "verde": 12,
+        "rojo": 0,
+        "amarillo": 4
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 16,
+        "complete_cycles": 12,
+        "assessed_complete_cycles": 12,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 4,
+        "assessed_fraction": 1.0,
+        "passing_cycles": 12,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 2,
+        "Oclusión durante la repetición.": 1,
+        "Falta observar el retorno.": 1
+      }
+    },
+    {
+      "file": "subject_005_shoulder_good_side.mp4",
+      "label": "correct",
+      "status": "unreadable",
+      "counts": {
+        "verde": 0,
+        "rojo": 0,
+        "amarillo": 0
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 0,
+        "complete_cycles": 0,
+        "assessed_complete_cycles": 0,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 0,
+        "assessed_fraction": 0.0,
+        "passing_cycles": 0,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {}
+    },
+    {
+      "file": "subject_006_shoulder_bad_diagonal.mp4",
+      "label": "incorrect",
+      "status": "unreadable",
+      "counts": {
+        "verde": 2,
+        "rojo": 0,
+        "amarillo": 9
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 11,
+        "complete_cycles": 7,
+        "assessed_complete_cycles": 2,
+        "unassessed_complete_cycles": 5,
+        "incomplete_cycles": 4,
+        "assessed_fraction": 0.2857142857142857,
+        "passing_cycles": 2,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Oclusión durante la repetición.": 4,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 4,
+        "Faltan medidas fiables en inicio.": 1
+      }
+    },
+    {
+      "file": "subject_006_shoulder_bad_front.mp4",
+      "label": "incorrect",
+      "status": "unreadable",
+      "counts": {
+        "verde": 0,
+        "rojo": 0,
+        "amarillo": 0
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 0,
+        "complete_cycles": 0,
+        "assessed_complete_cycles": 0,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 0,
+        "assessed_fraction": 0.0,
+        "passing_cycles": 0,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {}
+    },
+    {
+      "file": "subject_006_shoulder_bad_side.mp4",
+      "label": "incorrect",
+      "status": "unreadable",
+      "counts": {
+        "verde": 0,
+        "rojo": 0,
+        "amarillo": 14
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 14,
+        "complete_cycles": 1,
+        "assessed_complete_cycles": 0,
+        "unassessed_complete_cycles": 1,
+        "incomplete_cycles": 13,
+        "assessed_fraction": 0.0,
+        "passing_cycles": 0,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 4,
+        "Oclusión durante la repetición.": 9,
+        "Faltan medidas fiables en inicio, retorno.": 1
+      }
+    },
+    {
+      "file": "subject_006_shoulder_good_diagonal.mp4",
+      "label": "correct",
+      "status": "unreadable",
+      "counts": {
+        "verde": 1,
+        "rojo": 0,
+        "amarillo": 17
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 18,
+        "complete_cycles": 2,
+        "assessed_complete_cycles": 1,
+        "unassessed_complete_cycles": 1,
+        "incomplete_cycles": 16,
+        "assessed_fraction": 0.5,
+        "passing_cycles": 1,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 5,
+        "Oclusión durante la repetición.": 10,
+        "Faltan medidas fiables en inicio, retorno.": 1,
+        "Falta observar el retorno.": 1
+      }
+    },
+    {
+      "file": "subject_006_shoulder_good_front.mp4",
+      "label": "correct",
+      "status": "unreadable",
+      "counts": {
+        "verde": 9,
+        "rojo": 0,
+        "amarillo": 3
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 12,
+        "complete_cycles": 11,
+        "assessed_complete_cycles": 9,
+        "unassessed_complete_cycles": 2,
+        "incomplete_cycles": 1,
+        "assessed_fraction": 0.8181818181818182,
+        "passing_cycles": 9,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Hay una desviación breve sin suficiente continuidad para confirmarla.": 2,
+        "Oclusión durante la repetición.": 1
+      }
+    },
+    {
+      "file": "subject_006_shoulder_good_side.mp4",
+      "label": "correct",
+      "status": "unreadable",
+      "counts": {
+        "verde": 5,
+        "rojo": 0,
+        "amarillo": 3
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 8,
+        "complete_cycles": 7,
+        "assessed_complete_cycles": 5,
+        "unassessed_complete_cycles": 2,
+        "incomplete_cycles": 1,
+        "assessed_fraction": 0.7142857142857143,
+        "passing_cycles": 5,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Hay una desviación breve sin suficiente continuidad para confirmarla.": 2,
+        "Falta observar el retorno.": 1
+      }
+    },
+    {
+      "file": "subject_007_shoulder_bad_diagonal.mp4",
+      "label": "incorrect",
+      "status": "unreadable",
+      "counts": {
+        "verde": 1,
+        "rojo": 0,
+        "amarillo": 13
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 14,
+        "complete_cycles": 8,
+        "assessed_complete_cycles": 1,
+        "unassessed_complete_cycles": 7,
+        "incomplete_cycles": 6,
+        "assessed_fraction": 0.125,
+        "passing_cycles": 1,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Oclusión durante la repetición.": 4,
+        "Faltan medidas fiables en inicio.": 2,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 2,
+        "Faltan medidas fiables en retorno.": 2,
+        "Falta el inicio completo.": 2,
+        "Faltan medidas fiables en inicio, retorno.": 1
+      }
+    },
+    {
+      "file": "subject_007_shoulder_bad_front.mp4",
+      "label": "incorrect",
+      "status": "incorrect",
+      "counts": {
+        "verde": 8,
+        "rojo": 1,
+        "amarillo": 4
+      },
+      "error_keys": [
+        "press_extension"
+      ],
+      "assessment_summary": {
+        "total_cycles": 13,
+        "complete_cycles": 12,
+        "assessed_complete_cycles": 9,
+        "unassessed_complete_cycles": 3,
+        "incomplete_cycles": 1,
+        "assessed_fraction": 0.75,
+        "passing_cycles": 8,
+        "flagged_cycles": 1,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Faltan medidas fiables en inicio.": 1,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 2,
+        "Falta el inicio completo.": 1
+      }
+    },
+    {
+      "file": "subject_007_shoulder_bad_side.mp4",
+      "label": "incorrect",
+      "status": "unreadable",
+      "counts": {
+        "verde": 0,
+        "rojo": 0,
+        "amarillo": 0
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 0,
+        "complete_cycles": 0,
+        "assessed_complete_cycles": 0,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 0,
+        "assessed_fraction": 0.0,
+        "passing_cycles": 0,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {}
+    },
+    {
+      "file": "subject_007_shoulder_good_diagonal.mp4",
+      "label": "correct",
+      "status": "unreadable",
+      "counts": {
+        "verde": 2,
+        "rojo": 0,
+        "amarillo": 12
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 14,
+        "complete_cycles": 9,
+        "assessed_complete_cycles": 2,
+        "unassessed_complete_cycles": 7,
+        "incomplete_cycles": 5,
+        "assessed_fraction": 0.2222222222222222,
+        "passing_cycles": 2,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Oclusión durante la repetición.": 4,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 5,
+        "Faltan medidas fiables en inicio.": 1,
+        "Faltan medidas fiables en retorno.": 1,
+        "Falta el inicio completo.": 1
+      }
+    },
+    {
+      "file": "subject_007_shoulder_good_front.mp4",
+      "label": "correct",
+      "status": "unreadable",
+      "counts": {
+        "verde": 10,
+        "rojo": 0,
+        "amarillo": 4
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 14,
+        "complete_cycles": 13,
+        "assessed_complete_cycles": 10,
+        "unassessed_complete_cycles": 3,
+        "incomplete_cycles": 1,
+        "assessed_fraction": 0.7692307692307693,
+        "passing_cycles": 10,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 3,
+        "Oclusión durante la repetición.": 1
+      }
+    },
+    {
+      "file": "subject_007_shoulder_good_side.mp4",
+      "label": "correct",
+      "status": "unreadable",
+      "counts": {
+        "verde": 0,
+        "rojo": 0,
+        "amarillo": 0
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 0,
+        "complete_cycles": 0,
+        "assessed_complete_cycles": 0,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 0,
+        "assessed_fraction": 0.0,
+        "passing_cycles": 0,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {}
+    },
+    {
+      "file": "subject_008_shoulder_bad_diagonal.mp4",
+      "label": "incorrect",
+      "status": "incorrect",
+      "counts": {
+        "verde": 8,
+        "rojo": 2,
+        "amarillo": 6
+      },
+      "error_keys": [
+        "press_extension"
+      ],
+      "assessment_summary": {
+        "total_cycles": 16,
+        "complete_cycles": 15,
+        "assessed_complete_cycles": 10,
+        "unassessed_complete_cycles": 5,
+        "incomplete_cycles": 1,
+        "assessed_fraction": 0.6666666666666666,
+        "passing_cycles": 8,
+        "flagged_cycles": 2,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 1,
+        "Falta el inicio completo.": 1,
+        "Faltan medidas fiables en inicio.": 2,
+        "Hay una desviación breve sin suficiente continuidad para confirmarla.": 1,
+        "Faltan medidas fiables en retorno.": 1
+      }
+    },
+    {
+      "file": "subject_008_shoulder_bad_front.mp4",
+      "label": "incorrect",
+      "status": "incorrect",
+      "counts": {
+        "verde": 6,
+        "rojo": 8,
+        "amarillo": 1
+      },
+      "error_keys": [
+        "press_extension"
+      ],
+      "assessment_summary": {
+        "total_cycles": 15,
+        "complete_cycles": 14,
+        "assessed_complete_cycles": 14,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 1,
+        "assessed_fraction": 1.0,
+        "passing_cycles": 6,
+        "flagged_cycles": 8,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta observar el retorno.": 1
+      }
+    },
+    {
+      "file": "subject_008_shoulder_bad_side.mp4",
+      "label": "incorrect",
+      "status": "unreadable",
+      "counts": {
+        "verde": 0,
+        "rojo": 0,
+        "amarillo": 0
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 0,
+        "complete_cycles": 0,
+        "assessed_complete_cycles": 0,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 0,
+        "assessed_fraction": 0.0,
+        "passing_cycles": 0,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {}
+    },
+    {
+      "file": "subject_008_shoulder_good_diagonal.mp4",
+      "label": "correct",
+      "status": "unreadable",
+      "counts": {
+        "verde": 9,
+        "rojo": 0,
+        "amarillo": 6
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 15,
+        "complete_cycles": 11,
+        "assessed_complete_cycles": 9,
+        "unassessed_complete_cycles": 2,
+        "incomplete_cycles": 4,
+        "assessed_fraction": 0.8181818181818182,
+        "passing_cycles": 9,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Oclusión durante la repetición.": 3,
+        "Faltan medidas fiables en retorno.": 1,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 1,
+        "Falta el inicio completo.": 1
+      }
+    },
+    {
+      "file": "subject_008_shoulder_good_front.mp4",
+      "label": "correct",
+      "status": "correct",
+      "counts": {
+        "verde": 13,
+        "rojo": 0,
+        "amarillo": 1
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 14,
+        "complete_cycles": 13,
+        "assessed_complete_cycles": 13,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 1,
+        "assessed_fraction": 1.0,
+        "passing_cycles": 13,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta observar el retorno.": 1
+      }
+    },
+    {
+      "file": "subject_008_shoulder_good_side.mp4",
+      "label": "correct",
+      "status": "unreadable",
+      "counts": {
+        "verde": 0,
+        "rojo": 0,
+        "amarillo": 10
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 10,
+        "complete_cycles": 0,
+        "assessed_complete_cycles": 0,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 10,
+        "assessed_fraction": 0.0,
+        "passing_cycles": 0,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Oclusión durante la repetición.": 8,
+        "Falta el inicio completo.": 2
+      }
+    },
+    {
+      "file": "subject_009_shoulder_bad_diagonal.mp4",
+      "label": "incorrect",
+      "status": "incorrect",
+      "counts": {
+        "verde": 4,
+        "rojo": 1,
+        "amarillo": 9
+      },
+      "error_keys": [
+        "press_extension"
+      ],
+      "assessment_summary": {
+        "total_cycles": 14,
+        "complete_cycles": 12,
+        "assessed_complete_cycles": 5,
+        "unassessed_complete_cycles": 7,
+        "incomplete_cycles": 2,
+        "assessed_fraction": 0.4166666666666667,
+        "passing_cycles": 4,
+        "flagged_cycles": 1,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 1,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 6,
+        "Oclusión durante la repetición.": 1,
+        "Hay una desviación breve sin suficiente continuidad para confirmarla.": 1
+      }
+    },
+    {
+      "file": "subject_009_shoulder_bad_front.mp4",
+      "label": "incorrect",
+      "status": "incorrect",
+      "counts": {
+        "verde": 4,
+        "rojo": 8,
+        "amarillo": 2
+      },
+      "error_keys": [
+        "press_elevacion",
+        "press_extension"
+      ],
+      "assessment_summary": {
+        "total_cycles": 14,
+        "complete_cycles": 13,
+        "assessed_complete_cycles": 12,
+        "unassessed_complete_cycles": 1,
+        "incomplete_cycles": 1,
+        "assessed_fraction": 0.9230769230769231,
+        "passing_cycles": 4,
+        "flagged_cycles": 8,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 1,
+        "Hay una desviación breve sin suficiente continuidad para confirmarla.": 1
+      }
+    },
+    {
+      "file": "subject_009_shoulder_bad_side.mp4",
+      "label": "incorrect",
+      "status": "unreadable",
+      "counts": {
+        "verde": 0,
+        "rojo": 0,
+        "amarillo": 0
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 0,
+        "complete_cycles": 0,
+        "assessed_complete_cycles": 0,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 0,
+        "assessed_fraction": 0.0,
+        "passing_cycles": 0,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {}
+    },
+    {
+      "file": "subject_009_shoulder_good_diagonal.mp4",
+      "label": "correct",
+      "status": "correct",
+      "counts": {
+        "verde": 10,
+        "rojo": 0,
+        "amarillo": 5
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 15,
+        "complete_cycles": 10,
+        "assessed_complete_cycles": 10,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 5,
+        "assessed_fraction": 1.0,
+        "passing_cycles": 10,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Oclusión durante la repetición.": 5
+      }
+    },
+    {
+      "file": "subject_009_shoulder_good_front.mp4",
+      "label": "correct",
+      "status": "correct",
+      "counts": {
+        "verde": 10,
+        "rojo": 0,
+        "amarillo": 0
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 10,
+        "complete_cycles": 10,
+        "assessed_complete_cycles": 10,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 0,
+        "assessed_fraction": 1.0,
+        "passing_cycles": 10,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {}
+    },
+    {
+      "file": "subject_009_shoulder_good_side.mp4",
+      "label": "correct",
+      "status": "unreadable",
+      "counts": {
+        "verde": 0,
+        "rojo": 0,
+        "amarillo": 4
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 4,
+        "complete_cycles": 0,
+        "assessed_complete_cycles": 0,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 4,
+        "assessed_fraction": 0.0,
+        "passing_cycles": 0,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Oclusión durante la repetición.": 3,
+        "Falta el inicio completo.": 1
+      }
+    },
+    {
+      "file": "subject_010_shoulder_bad_diagonal.mp4",
+      "label": "incorrect",
+      "status": "incorrect",
+      "counts": {
+        "verde": 4,
+        "rojo": 2,
+        "amarillo": 14
+      },
+      "error_keys": [
+        "press_elevacion"
+      ],
+      "assessment_summary": {
+        "total_cycles": 20,
+        "complete_cycles": 10,
+        "assessed_complete_cycles": 6,
+        "unassessed_complete_cycles": 4,
+        "incomplete_cycles": 10,
+        "assessed_fraction": 0.6,
+        "passing_cycles": 4,
+        "flagged_cycles": 2,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Oclusión durante la repetición.": 6,
+        "Falta el inicio completo.": 4,
+        "Faltan medidas fiables en fase_superior.": 1,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 2,
+        "Hay una desviación breve sin suficiente continuidad para confirmarla.": 1
+      }
+    },
+    {
+      "file": "subject_010_shoulder_bad_front.mp4",
+      "label": "incorrect",
+      "status": "incorrect",
+      "counts": {
+        "verde": 14,
+        "rojo": 1,
+        "amarillo": 1
+      },
+      "error_keys": [
+        "press_extension"
+      ],
+      "assessment_summary": {
+        "total_cycles": 16,
+        "complete_cycles": 15,
+        "assessed_complete_cycles": 15,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 1,
+        "assessed_fraction": 1.0,
+        "passing_cycles": 14,
+        "flagged_cycles": 1,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta observar el retorno.": 1
+      }
+    },
+    {
+      "file": "subject_010_shoulder_bad_side.mp4",
+      "label": "incorrect",
+      "status": "unreadable",
+      "counts": {
+        "verde": 0,
+        "rojo": 0,
+        "amarillo": 5
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 5,
+        "complete_cycles": 1,
+        "assessed_complete_cycles": 0,
+        "unassessed_complete_cycles": 1,
+        "incomplete_cycles": 4,
+        "assessed_fraction": 0.0,
+        "passing_cycles": 0,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 2,
+        "Oclusión durante la repetición.": 1,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 1,
+        "Falta observar el retorno.": 1
+      }
+    },
+    {
+      "file": "subject_010_shoulder_good_diagonal.mp4",
+      "label": "correct",
+      "status": "incorrect",
+      "counts": {
+        "verde": 6,
+        "rojo": 9,
+        "amarillo": 12
+      },
+      "error_keys": [
+        "press_cambio_codo",
+        "press_elevacion",
+        "press_extension"
+      ],
+      "assessment_summary": {
+        "total_cycles": 27,
+        "complete_cycles": 24,
+        "assessed_complete_cycles": 15,
+        "unassessed_complete_cycles": 9,
+        "incomplete_cycles": 3,
+        "assessed_fraction": 0.625,
+        "passing_cycles": 6,
+        "flagged_cycles": 9,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 1,
+        "Falta el inicio completo.": 2,
+        "Faltan medidas fiables en inicio.": 5,
+        "Oclusión durante la repetición.": 1,
+        "Faltan medidas fiables en fase_superior, retorno.": 1,
+        "Faltan medidas fiables en retorno.": 2
+      }
+    },
+    {
+      "file": "subject_010_shoulder_good_front.mp4",
+      "label": "correct",
+      "status": "correct",
+      "counts": {
+        "verde": 12,
+        "rojo": 0,
+        "amarillo": 1
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 13,
+        "complete_cycles": 12,
+        "assessed_complete_cycles": 12,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 1,
+        "assessed_fraction": 1.0,
+        "passing_cycles": 12,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta observar el retorno.": 1
+      }
+    },
+    {
+      "file": "subject_010_shoulder_good_side.mp4",
+      "label": "correct",
+      "status": "unreadable",
+      "counts": {
+        "verde": 6,
+        "rojo": 0,
+        "amarillo": 4
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 10,
+        "complete_cycles": 8,
+        "assessed_complete_cycles": 6,
+        "unassessed_complete_cycles": 2,
+        "incomplete_cycles": 2,
+        "assessed_fraction": 0.75,
+        "passing_cycles": 6,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 1,
+        "Oclusión durante la repetición.": 1,
+        "Faltan medidas fiables en retorno.": 2
+      }
+    },
+    {
+      "file": "subject_011_shoulder_bad_diagonal.mp4",
+      "label": "incorrect",
+      "status": "correct",
+      "counts": {
+        "verde": 5,
+        "rojo": 0,
+        "amarillo": 8
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 13,
+        "complete_cycles": 5,
+        "assessed_complete_cycles": 5,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 8,
+        "assessed_fraction": 1.0,
+        "passing_cycles": 5,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Oclusión durante la repetición.": 6,
+        "Falta el inicio completo.": 1,
+        "Falta observar el retorno.": 1
+      }
+    },
+    {
+      "file": "subject_011_shoulder_bad_front.mp4",
+      "label": "incorrect",
+      "status": "unreadable",
+      "counts": {
+        "verde": 8,
+        "rojo": 0,
+        "amarillo": 1
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 9,
+        "complete_cycles": 9,
+        "assessed_complete_cycles": 8,
+        "unassessed_complete_cycles": 1,
+        "incomplete_cycles": 0,
+        "assessed_fraction": 0.8888888888888888,
+        "passing_cycles": 8,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 1
+      }
+    },
+    {
+      "file": "subject_011_shoulder_bad_side.mp4",
+      "label": "incorrect",
+      "status": "unreadable",
+      "counts": {
+        "verde": 1,
+        "rojo": 0,
+        "amarillo": 5
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 6,
+        "complete_cycles": 2,
+        "assessed_complete_cycles": 1,
+        "unassessed_complete_cycles": 1,
+        "incomplete_cycles": 4,
+        "assessed_fraction": 0.5,
+        "passing_cycles": 1,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 1,
+        "Oclusión durante la repetición.": 2,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 1,
+        "Falta observar el retorno.": 1
+      }
+    },
+    {
+      "file": "subject_011_shoulder_good_diagonal.mp4",
+      "label": "correct",
+      "status": "incorrect",
+      "counts": {
+        "verde": 5,
+        "rojo": 3,
+        "amarillo": 16
+      },
+      "error_keys": [
+        "press_cambio_codo",
+        "press_elevacion",
+        "press_extension"
+      ],
+      "assessment_summary": {
+        "total_cycles": 24,
+        "complete_cycles": 14,
+        "assessed_complete_cycles": 8,
+        "unassessed_complete_cycles": 6,
+        "incomplete_cycles": 10,
+        "assessed_fraction": 0.5714285714285714,
+        "passing_cycles": 5,
+        "flagged_cycles": 3,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Oclusión durante la repetición.": 5,
+        "Faltan medidas fiables en inicio, retorno.": 1,
+        "Falta el inicio completo.": 4,
+        "Hay una desviación breve sin suficiente continuidad para confirmarla.": 1,
+        "Faltan medidas fiables en retorno.": 2,
+        "Faltan medidas fiables en inicio.": 1,
+        "Faltan medidas fiables en fase_superior.": 1,
+        "Falta observar el retorno.": 1
+      }
+    },
+    {
+      "file": "subject_011_shoulder_good_front.mp4",
+      "label": "correct",
+      "status": "correct",
+      "counts": {
+        "verde": 12,
+        "rojo": 0,
+        "amarillo": 0
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 12,
+        "complete_cycles": 12,
+        "assessed_complete_cycles": 12,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 0,
+        "assessed_fraction": 1.0,
+        "passing_cycles": 12,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {}
+    },
+    {
+      "file": "subject_011_shoulder_good_side.mp4",
+      "label": "correct",
+      "status": "unreadable",
+      "counts": {
+        "verde": 0,
+        "rojo": 0,
+        "amarillo": 0
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 0,
+        "complete_cycles": 0,
+        "assessed_complete_cycles": 0,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 0,
+        "assessed_fraction": 0.0,
+        "passing_cycles": 0,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {}
+    },
+    {
+      "file": "subject_012_shoulder_bad_diagonal.mp4",
+      "label": "incorrect",
+      "status": "unreadable",
+      "counts": {
+        "verde": 3,
+        "rojo": 0,
+        "amarillo": 12
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 15,
+        "complete_cycles": 8,
+        "assessed_complete_cycles": 3,
+        "unassessed_complete_cycles": 5,
+        "incomplete_cycles": 7,
+        "assessed_fraction": 0.375,
+        "passing_cycles": 3,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Oclusión durante la repetición.": 2,
+        "Falta el inicio completo.": 4,
+        "Faltan medidas fiables en retorno.": 1,
+        "Faltan medidas fiables en inicio.": 1,
+        "Faltan medidas fiables en inicio, retorno.": 1,
+        "Hay una desviación breve sin suficiente continuidad para confirmarla.": 1,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 1,
+        "Falta observar el retorno.": 1
+      }
+    },
+    {
+      "file": "subject_012_shoulder_bad_front.mp4",
+      "label": "incorrect",
+      "status": "incorrect",
+      "counts": {
+        "verde": 5,
+        "rojo": 1,
+        "amarillo": 6
+      },
+      "error_keys": [
+        "press_retorno_brazo"
+      ],
+      "assessment_summary": {
+        "total_cycles": 12,
+        "complete_cycles": 10,
+        "assessed_complete_cycles": 6,
+        "unassessed_complete_cycles": 4,
+        "incomplete_cycles": 2,
+        "assessed_fraction": 0.6,
+        "passing_cycles": 5,
+        "flagged_cycles": 1,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 2,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 3,
+        "Hay una desviación breve sin suficiente continuidad para confirmarla.": 1
+      }
+    },
+    {
+      "file": "subject_012_shoulder_bad_side.mp4",
+      "label": "incorrect",
+      "status": "unreadable",
+      "counts": {
+        "verde": 0,
+        "rojo": 0,
+        "amarillo": 10
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 10,
+        "complete_cycles": 2,
+        "assessed_complete_cycles": 0,
+        "unassessed_complete_cycles": 2,
+        "incomplete_cycles": 8,
+        "assessed_fraction": 0.0,
+        "passing_cycles": 0,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 3,
+        "Oclusión durante la repetición.": 5,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 1,
+        "Faltan medidas fiables en retorno.": 1
+      }
+    },
+    {
+      "file": "subject_012_shoulder_good_diagonal.mp4",
+      "label": "correct",
+      "status": "correct",
+      "counts": {
+        "verde": 8,
+        "rojo": 0,
+        "amarillo": 3
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 11,
+        "complete_cycles": 8,
+        "assessed_complete_cycles": 8,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 3,
+        "assessed_fraction": 1.0,
+        "passing_cycles": 8,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 1,
+        "Oclusión durante la repetición.": 1,
+        "Falta observar el retorno.": 1
+      }
+    },
+    {
+      "file": "subject_012_shoulder_good_front.mp4",
+      "label": "correct",
+      "status": "correct",
+      "counts": {
+        "verde": 9,
+        "rojo": 0,
+        "amarillo": 2
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 11,
+        "complete_cycles": 9,
+        "assessed_complete_cycles": 9,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 2,
+        "assessed_fraction": 1.0,
+        "passing_cycles": 9,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 1,
+        "Falta observar el retorno.": 1
+      }
+    },
+    {
+      "file": "subject_012_shoulder_good_side.mp4",
+      "label": "correct",
+      "status": "unreadable",
+      "counts": {
+        "verde": 5,
+        "rojo": 0,
+        "amarillo": 4
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 9,
+        "complete_cycles": 6,
+        "assessed_complete_cycles": 5,
+        "unassessed_complete_cycles": 1,
+        "incomplete_cycles": 3,
+        "assessed_fraction": 0.8333333333333334,
+        "passing_cycles": 5,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 2,
+        "Oclusión durante la repetición.": 1,
+        "Hay una desviación breve sin suficiente continuidad para confirmarla.": 1
+      }
+    },
+    {
+      "file": "subject_013_shoulder_bad_diagonal.mp4",
+      "label": "incorrect",
+      "status": "incorrect",
+      "counts": {
+        "verde": 5,
+        "rojo": 1,
+        "amarillo": 6
+      },
+      "error_keys": [
+        "press_extension"
+      ],
+      "assessment_summary": {
+        "total_cycles": 12,
+        "complete_cycles": 11,
+        "assessed_complete_cycles": 6,
+        "unassessed_complete_cycles": 5,
+        "incomplete_cycles": 1,
+        "assessed_fraction": 0.5454545454545454,
+        "passing_cycles": 5,
+        "flagged_cycles": 1,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 1,
+        "Faltan medidas fiables en fase_superior.": 1,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 4
+      }
+    },
+    {
+      "file": "subject_013_shoulder_bad_front.mp4",
+      "label": "incorrect",
+      "status": "incorrect",
+      "counts": {
+        "verde": 5,
+        "rojo": 3,
+        "amarillo": 5
+      },
+      "error_keys": [
+        "press_extension"
+      ],
+      "assessment_summary": {
+        "total_cycles": 13,
+        "complete_cycles": 11,
+        "assessed_complete_cycles": 8,
+        "unassessed_complete_cycles": 3,
+        "incomplete_cycles": 2,
+        "assessed_fraction": 0.7272727272727273,
+        "passing_cycles": 5,
+        "flagged_cycles": 3,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 3,
+        "Oclusión durante la repetición.": 1,
+        "Falta el inicio completo.": 1
+      }
+    },
+    {
+      "file": "subject_013_shoulder_bad_side.mp4",
+      "label": "incorrect",
+      "status": "unreadable",
+      "counts": {
+        "verde": 0,
+        "rojo": 0,
+        "amarillo": 0
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 0,
+        "complete_cycles": 0,
+        "assessed_complete_cycles": 0,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 0,
+        "assessed_fraction": 0.0,
+        "passing_cycles": 0,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {}
+    },
+    {
+      "file": "subject_013_shoulder_good_diagonal.mp4",
+      "label": "correct",
+      "status": "correct",
+      "counts": {
+        "verde": 13,
+        "rojo": 0,
+        "amarillo": 2
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 15,
+        "complete_cycles": 13,
+        "assessed_complete_cycles": 13,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 2,
+        "assessed_fraction": 1.0,
+        "passing_cycles": 13,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Oclusión durante la repetición.": 1,
+        "Falta observar el retorno.": 1
+      }
+    },
+    {
+      "file": "subject_013_shoulder_good_front.mp4",
+      "label": "correct",
+      "status": "incorrect",
+      "counts": {
+        "verde": 8,
+        "rojo": 1,
+        "amarillo": 1
+      },
+      "error_keys": [
+        "press_extension"
+      ],
+      "assessment_summary": {
+        "total_cycles": 10,
+        "complete_cycles": 9,
+        "assessed_complete_cycles": 9,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 1,
+        "assessed_fraction": 1.0,
+        "passing_cycles": 8,
+        "flagged_cycles": 1,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Oclusión durante la repetición.": 1
+      }
+    },
+    {
+      "file": "subject_013_shoulder_good_side.mp4",
+      "label": "correct",
+      "status": "unreadable",
+      "counts": {
+        "verde": 0,
+        "rojo": 0,
+        "amarillo": 2
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 2,
+        "complete_cycles": 0,
+        "assessed_complete_cycles": 0,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 2,
+        "assessed_fraction": 0.0,
+        "passing_cycles": 0,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 1,
+        "Oclusión durante la repetición.": 1
+      }
+    },
+    {
+      "file": "subject_014_shoulder_bad_diagonal.mp4",
+      "label": "incorrect",
+      "status": "unreadable",
+      "counts": {
+        "verde": 2,
+        "rojo": 0,
+        "amarillo": 9
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 11,
+        "complete_cycles": 6,
+        "assessed_complete_cycles": 2,
+        "unassessed_complete_cycles": 4,
+        "incomplete_cycles": 5,
+        "assessed_fraction": 0.3333333333333333,
+        "passing_cycles": 2,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Oclusión durante la repetición.": 2,
+        "Falta el inicio completo.": 3,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 3,
+        "Faltan medidas fiables en inicio.": 1
+      }
+    },
+    {
+      "file": "subject_014_shoulder_bad_front.mp4",
+      "label": "incorrect",
+      "status": "incorrect",
+      "counts": {
+        "verde": 7,
+        "rojo": 1,
+        "amarillo": 2
+      },
+      "error_keys": [
+        "press_extension"
+      ],
+      "assessment_summary": {
+        "total_cycles": 10,
+        "complete_cycles": 9,
+        "assessed_complete_cycles": 8,
+        "unassessed_complete_cycles": 1,
+        "incomplete_cycles": 1,
+        "assessed_fraction": 0.8888888888888888,
+        "passing_cycles": 7,
+        "flagged_cycles": 1,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 1,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 1
+      }
+    },
+    {
+      "file": "subject_014_shoulder_bad_side.mp4",
+      "label": "incorrect",
+      "status": "unreadable",
+      "counts": {
+        "verde": 0,
+        "rojo": 0,
+        "amarillo": 0
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 0,
+        "complete_cycles": 0,
+        "assessed_complete_cycles": 0,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 0,
+        "assessed_fraction": 0.0,
+        "passing_cycles": 0,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {}
+    },
+    {
+      "file": "subject_014_shoulder_good_diagonal.mp4",
+      "label": "correct",
+      "status": "unreadable",
+      "counts": {
+        "verde": 9,
+        "rojo": 0,
+        "amarillo": 5
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 14,
+        "complete_cycles": 11,
+        "assessed_complete_cycles": 9,
+        "unassessed_complete_cycles": 2,
+        "incomplete_cycles": 3,
+        "assessed_fraction": 0.8181818181818182,
+        "passing_cycles": 9,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Faltan medidas fiables en inicio, fase_superior, retorno.": 1,
+        "Oclusión durante la repetición.": 1,
+        "Falta el inicio completo.": 2,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 1
+      }
+    },
+    {
+      "file": "subject_014_shoulder_good_front.mp4",
+      "label": "correct",
+      "status": "incorrect",
+      "counts": {
+        "verde": 11,
+        "rojo": 1,
+        "amarillo": 3
+      },
+      "error_keys": [
+        "press_extension"
+      ],
+      "assessment_summary": {
+        "total_cycles": 15,
+        "complete_cycles": 12,
+        "assessed_complete_cycles": 12,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 3,
+        "assessed_fraction": 1.0,
+        "passing_cycles": 11,
+        "flagged_cycles": 1,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Oclusión durante la repetición.": 3
+      }
+    },
+    {
+      "file": "subject_014_shoulder_good_side.mp4",
+      "label": "correct",
+      "status": "unreadable",
+      "counts": {
+        "verde": 0,
+        "rojo": 0,
+        "amarillo": 0
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 0,
+        "complete_cycles": 0,
+        "assessed_complete_cycles": 0,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 0,
+        "assessed_fraction": 0.0,
+        "passing_cycles": 0,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {}
+    },
+    {
+      "file": "subject_015_shoulder_bad_diagonal.mp4",
+      "label": "incorrect",
+      "status": "unreadable",
+      "counts": {
+        "verde": 3,
+        "rojo": 0,
+        "amarillo": 11
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 14,
+        "complete_cycles": 5,
+        "assessed_complete_cycles": 3,
+        "unassessed_complete_cycles": 2,
+        "incomplete_cycles": 9,
+        "assessed_fraction": 0.6,
+        "passing_cycles": 3,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 4,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 1,
+        "Oclusión durante la repetición.": 5,
+        "Faltan medidas fiables en inicio, retorno.": 1
+      }
+    },
+    {
+      "file": "subject_015_shoulder_bad_front.mp4",
+      "label": "incorrect",
+      "status": "correct",
+      "counts": {
+        "verde": 8,
+        "rojo": 0,
+        "amarillo": 1
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 9,
+        "complete_cycles": 8,
+        "assessed_complete_cycles": 8,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 1,
+        "assessed_fraction": 1.0,
+        "passing_cycles": 8,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 1
+      }
+    },
+    {
+      "file": "subject_015_shoulder_bad_side.mp4",
+      "label": "incorrect",
+      "status": "unreadable",
+      "counts": {
+        "verde": 0,
+        "rojo": 0,
+        "amarillo": 0
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 0,
+        "complete_cycles": 0,
+        "assessed_complete_cycles": 0,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 0,
+        "assessed_fraction": 0.0,
+        "passing_cycles": 0,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {}
+    },
+    {
+      "file": "subject_015_shoulder_good_diagonal.mp4",
+      "label": "correct",
+      "status": "correct",
+      "counts": {
+        "verde": 6,
+        "rojo": 0,
+        "amarillo": 2
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 8,
+        "complete_cycles": 6,
+        "assessed_complete_cycles": 6,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 2,
+        "assessed_fraction": 1.0,
+        "passing_cycles": 6,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Oclusión durante la repetición.": 1,
+        "Falta el inicio completo.": 1
+      }
+    },
+    {
+      "file": "subject_015_shoulder_good_front.mp4",
+      "label": "correct",
+      "status": "correct",
+      "counts": {
+        "verde": 9,
+        "rojo": 0,
+        "amarillo": 1
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 10,
+        "complete_cycles": 9,
+        "assessed_complete_cycles": 9,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 1,
+        "assessed_fraction": 1.0,
+        "passing_cycles": 9,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta observar el retorno.": 1
+      }
+    },
+    {
+      "file": "subject_015_shoulder_good_side.mp4",
+      "label": "correct",
+      "status": "unreadable",
+      "counts": {
+        "verde": 0,
+        "rojo": 0,
+        "amarillo": 14
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 14,
+        "complete_cycles": 2,
+        "assessed_complete_cycles": 0,
+        "unassessed_complete_cycles": 2,
+        "incomplete_cycles": 12,
+        "assessed_fraction": 0.0,
+        "passing_cycles": 0,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Oclusión durante la repetición.": 10,
+        "Falta el inicio completo.": 2,
+        "Faltan medidas fiables en inicio, retorno.": 1,
+        "Faltan medidas fiables en inicio, fase_superior, retorno.": 1
+      }
+    },
+    {
+      "file": "subject_016_shoulder_bad_diagonal.mp4",
+      "label": "incorrect",
+      "status": "unreadable",
+      "counts": {
+        "verde": 2,
+        "rojo": 0,
+        "amarillo": 16
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 18,
+        "complete_cycles": 11,
+        "assessed_complete_cycles": 2,
+        "unassessed_complete_cycles": 9,
+        "incomplete_cycles": 7,
+        "assessed_fraction": 0.18181818181818182,
+        "passing_cycles": 2,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Oclusión durante la repetición.": 4,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 7,
+        "Faltan medidas fiables en retorno.": 1,
+        "Faltan medidas fiables en inicio.": 1,
+        "Falta el inicio completo.": 3
+      }
+    },
+    {
+      "file": "subject_016_shoulder_bad_front.mp4",
+      "label": "incorrect",
+      "status": "unreadable",
+      "counts": {
+        "verde": 12,
+        "rojo": 0,
+        "amarillo": 4
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 16,
+        "complete_cycles": 14,
+        "assessed_complete_cycles": 12,
+        "unassessed_complete_cycles": 2,
+        "incomplete_cycles": 2,
+        "assessed_fraction": 0.8571428571428571,
+        "passing_cycles": 12,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 2,
+        "Falta el inicio completo.": 2
+      }
+    },
+    {
+      "file": "subject_016_shoulder_bad_side.mp4",
+      "label": "incorrect",
+      "status": "incorrect",
+      "counts": {
+        "verde": 0,
+        "rojo": 1,
+        "amarillo": 9
+      },
+      "error_keys": [
+        "press_elevacion"
+      ],
+      "assessment_summary": {
+        "total_cycles": 10,
+        "complete_cycles": 6,
+        "assessed_complete_cycles": 1,
+        "unassessed_complete_cycles": 5,
+        "incomplete_cycles": 4,
+        "assessed_fraction": 0.16666666666666666,
+        "passing_cycles": 0,
+        "flagged_cycles": 1,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Faltan medidas fiables en inicio.": 3,
+        "Faltan medidas fiables en inicio, retorno.": 1,
+        "Falta el inicio completo.": 3,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 1,
+        "Oclusión durante la repetición.": 1
+      }
+    },
+    {
+      "file": "subject_016_shoulder_good_diagonal.mp4",
+      "label": "correct",
+      "status": "correct",
+      "counts": {
+        "verde": 9,
+        "rojo": 0,
+        "amarillo": 2
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 11,
+        "complete_cycles": 9,
+        "assessed_complete_cycles": 9,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 2,
+        "assessed_fraction": 1.0,
+        "passing_cycles": 9,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Oclusión durante la repetición.": 1,
+        "Falta el inicio completo.": 1
+      }
+    },
+    {
+      "file": "subject_016_shoulder_good_front.mp4",
+      "label": "correct",
+      "status": "incorrect",
+      "counts": {
+        "verde": 10,
+        "rojo": 4,
+        "amarillo": 2
+      },
+      "error_keys": [
+        "press_extension"
+      ],
+      "assessment_summary": {
+        "total_cycles": 16,
+        "complete_cycles": 14,
+        "assessed_complete_cycles": 14,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 2,
+        "assessed_fraction": 1.0,
+        "passing_cycles": 10,
+        "flagged_cycles": 4,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Oclusión durante la repetición.": 1,
+        "Falta observar el retorno.": 1
+      }
+    },
+    {
+      "file": "subject_016_shoulder_good_side.mp4",
+      "label": "correct",
+      "status": "incorrect",
+      "counts": {
+        "verde": 0,
+        "rojo": 1,
+        "amarillo": 9
+      },
+      "error_keys": [
+        "press_elevacion"
+      ],
+      "assessment_summary": {
+        "total_cycles": 10,
+        "complete_cycles": 6,
+        "assessed_complete_cycles": 1,
+        "unassessed_complete_cycles": 5,
+        "incomplete_cycles": 4,
+        "assessed_fraction": 0.16666666666666666,
+        "passing_cycles": 0,
+        "flagged_cycles": 1,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Faltan medidas fiables en inicio.": 3,
+        "Faltan medidas fiables en inicio, retorno.": 1,
+        "Falta el inicio completo.": 3,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 1,
+        "Oclusión durante la repetición.": 1
+      }
+    },
+    {
+      "file": "subject_017_shoulder_bad_diagonal.mp4",
+      "label": "incorrect",
+      "status": "unreadable",
+      "counts": {
+        "verde": 0,
+        "rojo": 0,
+        "amarillo": 19
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 19,
+        "complete_cycles": 16,
+        "assessed_complete_cycles": 0,
+        "unassessed_complete_cycles": 16,
+        "incomplete_cycles": 3,
+        "assessed_fraction": 0.0,
+        "passing_cycles": 0,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 1,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 10,
+        "Oclusión durante la repetición.": 1,
+        "Faltan medidas fiables en inicio.": 4,
+        "Hay una desviación breve sin suficiente continuidad para confirmarla.": 1,
+        "Falta observar el retorno.": 1,
+        "Faltan medidas fiables en retorno.": 1
+      }
+    },
+    {
+      "file": "subject_017_shoulder_bad_front.mp4",
+      "label": "incorrect",
+      "status": "unreadable",
+      "counts": {
+        "verde": 4,
+        "rojo": 0,
+        "amarillo": 13
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 17,
+        "complete_cycles": 16,
+        "assessed_complete_cycles": 4,
+        "unassessed_complete_cycles": 12,
+        "incomplete_cycles": 1,
+        "assessed_fraction": 0.25,
+        "passing_cycles": 4,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 1,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 6,
+        "Faltan medidas fiables en retorno.": 2,
+        "Hay una desviación breve sin suficiente continuidad para confirmarla.": 4
+      }
+    },
+    {
+      "file": "subject_017_shoulder_bad_side.mp4",
+      "label": "incorrect",
+      "status": "unreadable",
+      "counts": {
+        "verde": 0,
+        "rojo": 0,
+        "amarillo": 0
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 0,
+        "complete_cycles": 0,
+        "assessed_complete_cycles": 0,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 0,
+        "assessed_fraction": 0.0,
+        "passing_cycles": 0,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {}
+    },
+    {
+      "file": "subject_017_shoulder_good_diagonal.mp4",
+      "label": "correct",
+      "status": "correct",
+      "counts": {
+        "verde": 17,
+        "rojo": 0,
+        "amarillo": 2
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 19,
+        "complete_cycles": 17,
+        "assessed_complete_cycles": 17,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 2,
+        "assessed_fraction": 1.0,
+        "passing_cycles": 17,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Oclusión durante la repetición.": 1,
+        "Falta el inicio completo.": 1
+      }
+    },
+    {
+      "file": "subject_017_shoulder_good_front.mp4",
+      "label": "correct",
+      "status": "unreadable",
+      "counts": {
+        "verde": 16,
+        "rojo": 0,
+        "amarillo": 4
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 20,
+        "complete_cycles": 17,
+        "assessed_complete_cycles": 16,
+        "unassessed_complete_cycles": 1,
+        "incomplete_cycles": 3,
+        "assessed_fraction": 0.9411764705882353,
+        "passing_cycles": 16,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 1,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 1,
+        "Oclusión durante la repetición.": 2
+      }
+    },
+    {
+      "file": "subject_017_shoulder_good_side.mp4",
+      "label": "correct",
+      "status": "unreadable",
+      "counts": {
+        "verde": 6,
+        "rojo": 0,
+        "amarillo": 13
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 19,
+        "complete_cycles": 16,
+        "assessed_complete_cycles": 6,
+        "unassessed_complete_cycles": 10,
+        "incomplete_cycles": 3,
+        "assessed_fraction": 0.375,
+        "passing_cycles": 6,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 2,
+        "Falta el inicio completo.": 3,
+        "Faltan medidas fiables en inicio, fase_superior.": 1,
+        "Faltan medidas fiables en fase_superior.": 1,
+        "Faltan medidas fiables en retorno.": 3,
+        "Faltan medidas fiables en inicio.": 3
+      }
+    },
+    {
+      "file": "subject_018_shoulder_bad_diagonal.mp4",
+      "label": "incorrect",
+      "status": "incorrect",
+      "counts": {
+        "verde": 9,
+        "rojo": 3,
+        "amarillo": 1
+      },
+      "error_keys": [
+        "press_extension"
+      ],
+      "assessment_summary": {
+        "total_cycles": 13,
+        "complete_cycles": 13,
+        "assessed_complete_cycles": 12,
+        "unassessed_complete_cycles": 1,
+        "incomplete_cycles": 0,
+        "assessed_fraction": 0.9230769230769231,
+        "passing_cycles": 9,
+        "flagged_cycles": 3,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 1
+      }
+    },
+    {
+      "file": "subject_018_shoulder_bad_front.mp4",
+      "label": "incorrect",
+      "status": "incorrect",
+      "counts": {
+        "verde": 0,
+        "rojo": 12,
+        "amarillo": 3
+      },
+      "error_keys": [
+        "press_elevacion",
+        "press_extension"
+      ],
+      "assessment_summary": {
+        "total_cycles": 15,
+        "complete_cycles": 15,
+        "assessed_complete_cycles": 12,
+        "unassessed_complete_cycles": 3,
+        "incomplete_cycles": 0,
+        "assessed_fraction": 0.8,
+        "passing_cycles": 0,
+        "flagged_cycles": 12,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Hay una desviación breve sin suficiente continuidad para confirmarla.": 2,
+        "Faltan medidas fiables en fase_superior.": 1
+      }
+    },
+    {
+      "file": "subject_018_shoulder_bad_side.mp4",
+      "label": "incorrect",
+      "status": "unreadable",
+      "counts": {
+        "verde": 12,
+        "rojo": 0,
+        "amarillo": 3
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 15,
+        "complete_cycles": 14,
+        "assessed_complete_cycles": 12,
+        "unassessed_complete_cycles": 2,
+        "incomplete_cycles": 1,
+        "assessed_fraction": 0.8571428571428571,
+        "passing_cycles": 12,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 1,
+        "Faltan medidas fiables en retorno.": 2
+      }
+    },
+    {
+      "file": "subject_018_shoulder_good_diagonal.mp4",
+      "label": "correct",
+      "status": "correct",
+      "counts": {
+        "verde": 10,
+        "rojo": 0,
+        "amarillo": 3
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 13,
+        "complete_cycles": 10,
+        "assessed_complete_cycles": 10,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 3,
+        "assessed_fraction": 1.0,
+        "passing_cycles": 10,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 3
+      }
+    },
+    {
+      "file": "subject_018_shoulder_good_front.mp4",
+      "label": "correct",
+      "status": "incorrect",
+      "counts": {
+        "verde": 8,
+        "rojo": 2,
+        "amarillo": 2
+      },
+      "error_keys": [
+        "press_extension"
+      ],
+      "assessment_summary": {
+        "total_cycles": 12,
+        "complete_cycles": 11,
+        "assessed_complete_cycles": 10,
+        "unassessed_complete_cycles": 1,
+        "incomplete_cycles": 1,
+        "assessed_fraction": 0.9090909090909091,
+        "passing_cycles": 8,
+        "flagged_cycles": 2,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Hay una desviación breve sin suficiente continuidad para confirmarla.": 1,
+        "Oclusión durante la repetición.": 1
+      }
+    },
+    {
+      "file": "subject_018_shoulder_good_side.mp4",
+      "label": "correct",
+      "status": "correct",
+      "counts": {
+        "verde": 8,
+        "rojo": 0,
+        "amarillo": 3
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 11,
+        "complete_cycles": 8,
+        "assessed_complete_cycles": 8,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 3,
+        "assessed_fraction": 1.0,
+        "passing_cycles": 8,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Oclusión durante la repetición.": 2,
+        "Falta el inicio completo.": 1
+      }
+    },
+    {
+      "file": "subject_019_shoulder_bad_diagonal.mp4",
+      "label": "incorrect",
+      "status": "unreadable",
+      "counts": {
+        "verde": 0,
+        "rojo": 0,
+        "amarillo": 8
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 8,
+        "complete_cycles": 1,
+        "assessed_complete_cycles": 0,
+        "unassessed_complete_cycles": 1,
+        "incomplete_cycles": 7,
+        "assessed_fraction": 0.0,
+        "passing_cycles": 0,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Oclusión durante la repetición.": 6,
+        "Faltan medidas fiables en retorno.": 1,
+        "Falta el inicio completo.": 1
+      }
+    },
+    {
+      "file": "subject_019_shoulder_bad_front.mp4",
+      "label": "incorrect",
+      "status": "unreadable",
+      "counts": {
+        "verde": 1,
+        "rojo": 0,
+        "amarillo": 9
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 10,
+        "complete_cycles": 5,
+        "assessed_complete_cycles": 1,
+        "unassessed_complete_cycles": 4,
+        "incomplete_cycles": 5,
+        "assessed_fraction": 0.2,
+        "passing_cycles": 1,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Faltan medidas fiables en retorno.": 1,
+        "Oclusión durante la repetición.": 3,
+        "Falta el inicio completo.": 2,
+        "Faltan medidas fiables en inicio.": 2,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 1
+      }
+    },
+    {
+      "file": "subject_019_shoulder_bad_side.mp4",
+      "label": "incorrect",
+      "status": "unreadable",
+      "counts": {
+        "verde": 0,
+        "rojo": 0,
+        "amarillo": 6
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 6,
+        "complete_cycles": 2,
+        "assessed_complete_cycles": 0,
+        "unassessed_complete_cycles": 2,
+        "incomplete_cycles": 4,
+        "assessed_fraction": 0.0,
+        "passing_cycles": 0,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 2,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 2,
+        "Oclusión durante la repetición.": 2
+      }
+    },
+    {
+      "file": "subject_019_shoulder_good_diagonal.mp4",
+      "label": "correct",
+      "status": "unreadable",
+      "counts": {
+        "verde": 2,
+        "rojo": 0,
+        "amarillo": 19
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 21,
+        "complete_cycles": 8,
+        "assessed_complete_cycles": 2,
+        "unassessed_complete_cycles": 6,
+        "incomplete_cycles": 13,
+        "assessed_fraction": 0.25,
+        "passing_cycles": 2,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Faltan medidas fiables en inicio.": 1,
+        "Faltan medidas fiables en inicio, fase_superior.": 2,
+        "Oclusión durante la repetición.": 9,
+        "Falta el inicio completo.": 4,
+        "Faltan medidas fiables en inicio, retorno.": 1,
+        "Faltan medidas fiables en retorno.": 1,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 1
+      }
+    },
+    {
+      "file": "subject_019_shoulder_good_front.mp4",
+      "label": "correct",
+      "status": "unreadable",
+      "counts": {
+        "verde": 7,
+        "rojo": 0,
+        "amarillo": 11
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 18,
+        "complete_cycles": 12,
+        "assessed_complete_cycles": 7,
+        "unassessed_complete_cycles": 5,
+        "incomplete_cycles": 6,
+        "assessed_fraction": 0.5833333333333334,
+        "passing_cycles": 7,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 3,
+        "Oclusión durante la repetición.": 4,
+        "Faltan medidas fiables en inicio.": 2,
+        "Falta el inicio completo.": 2
+      }
+    },
+    {
+      "file": "subject_019_shoulder_good_side.mp4",
+      "label": "correct",
+      "status": "unreadable",
+      "counts": {
+        "verde": 1,
+        "rojo": 0,
+        "amarillo": 13
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 14,
+        "complete_cycles": 9,
+        "assessed_complete_cycles": 1,
+        "unassessed_complete_cycles": 8,
+        "incomplete_cycles": 5,
+        "assessed_fraction": 0.1111111111111111,
+        "passing_cycles": 1,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 3,
+        "Faltan medidas fiables en fase_superior, retorno.": 1,
+        "Faltan medidas fiables en inicio.": 2,
+        "Oclusión durante la repetición.": 2,
+        "Hay una desviación breve sin suficiente continuidad para confirmarla.": 3,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 1,
+        "Faltan medidas fiables en retorno.": 1
+      }
+    },
+    {
+      "file": "subject_020_shoulder_bad_diagonal.mp4",
+      "label": "incorrect",
+      "status": "unreadable",
+      "counts": {
+        "verde": 8,
+        "rojo": 0,
+        "amarillo": 15
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 23,
+        "complete_cycles": 16,
+        "assessed_complete_cycles": 8,
+        "unassessed_complete_cycles": 8,
+        "incomplete_cycles": 7,
+        "assessed_fraction": 0.5,
+        "passing_cycles": 8,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 1,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 8,
+        "Oclusión durante la repetición.": 5,
+        "Falta observar el retorno.": 1
+      }
+    },
+    {
+      "file": "subject_020_shoulder_bad_front.mp4",
+      "label": "incorrect",
+      "status": "unreadable",
+      "counts": {
+        "verde": 14,
+        "rojo": 0,
+        "amarillo": 2
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 16,
+        "complete_cycles": 15,
+        "assessed_complete_cycles": 14,
+        "unassessed_complete_cycles": 1,
+        "incomplete_cycles": 1,
+        "assessed_fraction": 0.9333333333333333,
+        "passing_cycles": 14,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 1,
+        "Faltan medidas fiables en retorno.": 1
+      }
+    },
+    {
+      "file": "subject_020_shoulder_bad_side.mp4",
+      "label": "incorrect",
+      "status": "unreadable",
+      "counts": {
+        "verde": 0,
+        "rojo": 0,
+        "amarillo": 0
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 0,
+        "complete_cycles": 0,
+        "assessed_complete_cycles": 0,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 0,
+        "assessed_fraction": 0.0,
+        "passing_cycles": 0,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {}
+    },
+    {
+      "file": "subject_020_shoulder_good_diagonal.mp4",
+      "label": "correct",
+      "status": "unreadable",
+      "counts": {
+        "verde": 5,
+        "rojo": 0,
+        "amarillo": 14
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 19,
+        "complete_cycles": 9,
+        "assessed_complete_cycles": 5,
+        "unassessed_complete_cycles": 4,
+        "incomplete_cycles": 10,
+        "assessed_fraction": 0.5555555555555556,
+        "passing_cycles": 5,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 4,
+        "Oclusión durante la repetición.": 5,
+        "Faltan medidas fiables en fase_superior, retorno.": 1,
+        "Faltan medidas fiables en fase_superior.": 1,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 1,
+        "Faltan medidas fiables en retorno.": 1,
+        "Falta observar el retorno.": 1
+      }
+    },
+    {
+      "file": "subject_020_shoulder_good_front.mp4",
+      "label": "correct",
+      "status": "correct",
+      "counts": {
+        "verde": 12,
+        "rojo": 0,
+        "amarillo": 0
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 12,
+        "complete_cycles": 12,
+        "assessed_complete_cycles": 12,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 0,
+        "assessed_fraction": 1.0,
+        "passing_cycles": 12,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {}
+    },
+    {
+      "file": "subject_020_shoulder_good_side.mp4",
+      "label": "correct",
+      "status": "unreadable",
+      "counts": {
+        "verde": 0,
+        "rojo": 0,
+        "amarillo": 0
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 0,
+        "complete_cycles": 0,
+        "assessed_complete_cycles": 0,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 0,
+        "assessed_fraction": 0.0,
+        "passing_cycles": 0,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {}
+    },
+    {
+      "file": "subject_021_shoulder_bad_diagonal.mp4",
+      "label": "incorrect",
+      "status": "incorrect",
+      "counts": {
+        "verde": 4,
+        "rojo": 3,
+        "amarillo": 7
+      },
+      "error_keys": [
+        "press_elevacion"
+      ],
+      "assessment_summary": {
+        "total_cycles": 14,
+        "complete_cycles": 12,
+        "assessed_complete_cycles": 7,
+        "unassessed_complete_cycles": 5,
+        "incomplete_cycles": 2,
+        "assessed_fraction": 0.5833333333333334,
+        "passing_cycles": 4,
+        "flagged_cycles": 3,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 1,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 2,
+        "Hay una desviación breve sin suficiente continuidad para confirmarla.": 2,
+        "Oclusión durante la repetición.": 1,
+        "Faltan medidas fiables en inicio.": 1
+      }
+    },
+    {
+      "file": "subject_021_shoulder_bad_front.mp4",
+      "label": "incorrect",
+      "status": "incorrect",
+      "counts": {
+        "verde": 2,
+        "rojo": 14,
+        "amarillo": 1
+      },
+      "error_keys": [
+        "press_elevacion"
+      ],
+      "assessment_summary": {
+        "total_cycles": 17,
+        "complete_cycles": 16,
+        "assessed_complete_cycles": 16,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 1,
+        "assessed_fraction": 1.0,
+        "passing_cycles": 2,
+        "flagged_cycles": 14,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta observar el retorno.": 1
+      }
+    },
+    {
+      "file": "subject_021_shoulder_bad_side.mp4",
+      "label": "incorrect",
+      "status": "unreadable",
+      "counts": {
+        "verde": 0,
+        "rojo": 0,
+        "amarillo": 0
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 0,
+        "complete_cycles": 0,
+        "assessed_complete_cycles": 0,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 0,
+        "assessed_fraction": 0.0,
+        "passing_cycles": 0,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {}
+    },
+    {
+      "file": "subject_021_shoulder_good_diagonal.mp4",
+      "label": "correct",
+      "status": "unreadable",
+      "counts": {
+        "verde": 5,
+        "rojo": 0,
+        "amarillo": 8
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 13,
+        "complete_cycles": 8,
+        "assessed_complete_cycles": 5,
+        "unassessed_complete_cycles": 3,
+        "incomplete_cycles": 5,
+        "assessed_fraction": 0.625,
+        "passing_cycles": 5,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Oclusión durante la repetición.": 2,
+        "Falta el inicio completo.": 2,
+        "Faltan medidas fiables en inicio.": 1,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 2,
+        "Falta observar el retorno.": 1
+      }
+    },
+    {
+      "file": "subject_021_shoulder_good_front.mp4",
+      "label": "correct",
+      "status": "unreadable",
+      "counts": {
+        "verde": 11,
+        "rojo": 0,
+        "amarillo": 4
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 15,
+        "complete_cycles": 13,
+        "assessed_complete_cycles": 11,
+        "unassessed_complete_cycles": 2,
+        "incomplete_cycles": 2,
+        "assessed_fraction": 0.8461538461538461,
+        "passing_cycles": 11,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 1,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 1,
+        "Faltan medidas fiables en inicio.": 1,
+        "Falta observar el retorno.": 1
+      }
+    },
+    {
+      "file": "subject_021_shoulder_good_side.mp4",
+      "label": "correct",
+      "status": "correct",
+      "counts": {
+        "verde": 12,
+        "rojo": 0,
+        "amarillo": 2
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 14,
+        "complete_cycles": 12,
+        "assessed_complete_cycles": 12,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 2,
+        "assessed_fraction": 1.0,
+        "passing_cycles": 12,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Oclusión durante la repetición.": 1,
+        "Falta el inicio completo.": 1
+      }
+    },
+    {
+      "file": "subject_022_shoulder_bad_diagonal.mp4",
+      "label": "incorrect",
+      "status": "incorrect",
+      "counts": {
+        "verde": 6,
+        "rojo": 2,
+        "amarillo": 12
+      },
+      "error_keys": [
+        "press_extension"
+      ],
+      "assessment_summary": {
+        "total_cycles": 20,
+        "complete_cycles": 16,
+        "assessed_complete_cycles": 8,
+        "unassessed_complete_cycles": 8,
+        "incomplete_cycles": 4,
+        "assessed_fraction": 0.5,
+        "passing_cycles": 6,
+        "flagged_cycles": 2,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Oclusión durante la repetición.": 2,
+        "Falta el inicio completo.": 2,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 1,
+        "Faltan medidas fiables en inicio.": 2,
+        "Faltan medidas fiables en retorno.": 3,
+        "Hay una desviación breve sin suficiente continuidad para confirmarla.": 1,
+        "Faltan medidas fiables en inicio, fase_superior.": 1
+      }
+    },
+    {
+      "file": "subject_022_shoulder_bad_front.mp4",
+      "label": "incorrect",
+      "status": "unreadable",
+      "counts": {
+        "verde": 2,
+        "rojo": 0,
+        "amarillo": 11
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 13,
+        "complete_cycles": 10,
+        "assessed_complete_cycles": 2,
+        "unassessed_complete_cycles": 8,
+        "incomplete_cycles": 3,
+        "assessed_fraction": 0.2,
+        "passing_cycles": 2,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Oclusión durante la repetición.": 2,
+        "Faltan medidas fiables en retorno.": 3,
+        "Hay una desviación breve sin suficiente continuidad para confirmarla.": 3,
+        "Falta el inicio completo.": 1,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 1,
+        "Faltan medidas fiables en inicio.": 1
+      }
+    },
+    {
+      "file": "subject_022_shoulder_bad_side.mp4",
+      "label": "incorrect",
+      "status": "unreadable",
+      "counts": {
+        "verde": 2,
+        "rojo": 0,
+        "amarillo": 8
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 10,
+        "complete_cycles": 5,
+        "assessed_complete_cycles": 2,
+        "unassessed_complete_cycles": 3,
+        "incomplete_cycles": 5,
+        "assessed_fraction": 0.4,
+        "passing_cycles": 2,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 5,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 1,
+        "Faltan medidas fiables en retorno.": 1,
+        "Faltan medidas fiables en inicio, retorno.": 1
+      }
+    },
+    {
+      "file": "subject_022_shoulder_good_diagonal.mp4",
+      "label": "correct",
+      "status": "correct",
+      "counts": {
+        "verde": 8,
+        "rojo": 0,
+        "amarillo": 6
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 14,
+        "complete_cycles": 8,
+        "assessed_complete_cycles": 8,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 6,
+        "assessed_fraction": 1.0,
+        "passing_cycles": 8,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 3,
+        "Oclusión durante la repetición.": 2,
+        "Falta observar el retorno.": 1
+      }
+    },
+    {
+      "file": "subject_022_shoulder_good_front.mp4",
+      "label": "correct",
+      "status": "incorrect",
+      "counts": {
+        "verde": 11,
+        "rojo": 1,
+        "amarillo": 7
+      },
+      "error_keys": [
+        "press_extension"
+      ],
+      "assessment_summary": {
+        "total_cycles": 19,
+        "complete_cycles": 16,
+        "assessed_complete_cycles": 12,
+        "unassessed_complete_cycles": 4,
+        "incomplete_cycles": 3,
+        "assessed_fraction": 0.75,
+        "passing_cycles": 11,
+        "flagged_cycles": 1,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 1,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 1,
+        "Hay una desviación breve sin suficiente continuidad para confirmarla.": 3,
+        "Oclusión durante la repetición.": 1,
+        "Falta observar el retorno.": 1
+      }
+    },
+    {
+      "file": "subject_022_shoulder_good_side.mp4",
+      "label": "correct",
+      "status": "incorrect",
+      "counts": {
+        "verde": 1,
+        "rojo": 1,
+        "amarillo": 3
+      },
+      "error_keys": [
+        "compensacion_tronco"
+      ],
+      "assessment_summary": {
+        "total_cycles": 5,
+        "complete_cycles": 3,
+        "assessed_complete_cycles": 2,
+        "unassessed_complete_cycles": 1,
+        "incomplete_cycles": 2,
+        "assessed_fraction": 0.6666666666666666,
+        "passing_cycles": 1,
+        "flagged_cycles": 1,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 1,
+        "Oclusión durante la repetición.": 1,
+        "Falta el inicio completo.": 1
+      }
+    },
+    {
+      "file": "subject_023_shoulder_bad_diagonal.mp4",
+      "label": "incorrect",
+      "status": "correct",
+      "counts": {
+        "verde": 4,
+        "rojo": 0,
+        "amarillo": 8
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 12,
+        "complete_cycles": 4,
+        "assessed_complete_cycles": 4,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 8,
+        "assessed_fraction": 1.0,
+        "passing_cycles": 4,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 7,
+        "Falta observar el retorno.": 1
+      }
+    },
+    {
+      "file": "subject_023_shoulder_bad_front.mp4",
+      "label": "incorrect",
+      "status": "incorrect",
+      "counts": {
+        "verde": 2,
+        "rojo": 4,
+        "amarillo": 7
+      },
+      "error_keys": [
+        "press_elevacion",
+        "press_extension"
+      ],
+      "assessment_summary": {
+        "total_cycles": 13,
+        "complete_cycles": 10,
+        "assessed_complete_cycles": 6,
+        "unassessed_complete_cycles": 4,
+        "incomplete_cycles": 3,
+        "assessed_fraction": 0.6,
+        "passing_cycles": 2,
+        "flagged_cycles": 4,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 1,
+        "Hay una desviación breve sin suficiente continuidad para confirmarla.": 1,
+        "Oclusión durante la repetición.": 1,
+        "Faltan medidas fiables en inicio.": 1,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 1,
+        "Faltan medidas fiables en inicio, retorno.": 1,
+        "Falta observar el retorno.": 1
+      }
+    },
+    {
+      "file": "subject_023_shoulder_bad_side.mp4",
+      "label": "incorrect",
+      "status": "unreadable",
+      "counts": {
+        "verde": 7,
+        "rojo": 0,
+        "amarillo": 5
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 12,
+        "complete_cycles": 8,
+        "assessed_complete_cycles": 7,
+        "unassessed_complete_cycles": 1,
+        "incomplete_cycles": 4,
+        "assessed_fraction": 0.875,
+        "passing_cycles": 7,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 1,
+        "Oclusión durante la repetición.": 3,
+        "Falta el inicio completo.": 1
+      }
+    },
+    {
+      "file": "subject_023_shoulder_good_diagonal.mp4",
+      "label": "correct",
+      "status": "incorrect",
+      "counts": {
+        "verde": 1,
+        "rojo": 2,
+        "amarillo": 9
+      },
+      "error_keys": [
+        "press_cambio_codo"
+      ],
+      "assessment_summary": {
+        "total_cycles": 12,
+        "complete_cycles": 6,
+        "assessed_complete_cycles": 3,
+        "unassessed_complete_cycles": 3,
+        "incomplete_cycles": 6,
+        "assessed_fraction": 0.5,
+        "passing_cycles": 1,
+        "flagged_cycles": 2,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 4,
+        "Oclusión durante la repetición.": 1,
+        "Faltan medidas fiables en retorno.": 1,
+        "Faltan medidas fiables en inicio, fase_superior, retorno.": 1,
+        "Faltan medidas fiables en inicio.": 1,
+        "Falta observar el retorno.": 1
+      }
+    },
+    {
+      "file": "subject_023_shoulder_good_front.mp4",
+      "label": "correct",
+      "status": "correct",
+      "counts": {
+        "verde": 4,
+        "rojo": 0,
+        "amarillo": 8
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 12,
+        "complete_cycles": 4,
+        "assessed_complete_cycles": 4,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 8,
+        "assessed_fraction": 1.0,
+        "passing_cycles": 4,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 7,
+        "Falta observar el retorno.": 1
+      }
+    },
+    {
+      "file": "subject_023_shoulder_good_side.mp4",
+      "label": "correct",
+      "status": "unreadable",
+      "counts": {
+        "verde": 7,
+        "rojo": 0,
+        "amarillo": 5
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 12,
+        "complete_cycles": 8,
+        "assessed_complete_cycles": 7,
+        "unassessed_complete_cycles": 1,
+        "incomplete_cycles": 4,
+        "assessed_fraction": 0.875,
+        "passing_cycles": 7,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 1,
+        "Oclusión durante la repetición.": 3,
+        "Falta el inicio completo.": 1
+      }
+    },
+    {
+      "file": "subject_024_shoulder_bad_diagonal.mp4",
+      "label": "incorrect",
+      "status": "incorrect",
+      "counts": {
+        "verde": 4,
+        "rojo": 5,
+        "amarillo": 1
+      },
+      "error_keys": [
+        "press_elevacion",
+        "press_extension"
+      ],
+      "assessment_summary": {
+        "total_cycles": 10,
+        "complete_cycles": 10,
+        "assessed_complete_cycles": 9,
+        "unassessed_complete_cycles": 1,
+        "incomplete_cycles": 0,
+        "assessed_fraction": 0.9,
+        "passing_cycles": 4,
+        "flagged_cycles": 5,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Hay una desviación breve sin suficiente continuidad para confirmarla.": 1
+      }
+    },
+    {
+      "file": "subject_024_shoulder_bad_front.mp4",
+      "label": "incorrect",
+      "status": "incorrect",
+      "counts": {
+        "verde": 1,
+        "rojo": 8,
+        "amarillo": 3
+      },
+      "error_keys": [
+        "press_cambio_codo",
+        "press_extension"
+      ],
+      "assessment_summary": {
+        "total_cycles": 12,
+        "complete_cycles": 10,
+        "assessed_complete_cycles": 9,
+        "unassessed_complete_cycles": 1,
+        "incomplete_cycles": 2,
+        "assessed_fraction": 0.9,
+        "passing_cycles": 1,
+        "flagged_cycles": 8,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 1,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 1,
+        "Falta observar el retorno.": 1
+      }
+    },
+    {
+      "file": "subject_024_shoulder_bad_side.mp4",
+      "label": "incorrect",
+      "status": "unreadable",
+      "counts": {
+        "verde": 0,
+        "rojo": 0,
+        "amarillo": 0
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 0,
+        "complete_cycles": 0,
+        "assessed_complete_cycles": 0,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 0,
+        "assessed_fraction": 0.0,
+        "passing_cycles": 0,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {}
+    },
+    {
+      "file": "subject_024_shoulder_good_diagonal.mp4",
+      "label": "correct",
+      "status": "correct",
+      "counts": {
+        "verde": 7,
+        "rojo": 0,
+        "amarillo": 0
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 7,
+        "complete_cycles": 7,
+        "assessed_complete_cycles": 7,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 0,
+        "assessed_fraction": 1.0,
+        "passing_cycles": 7,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {}
+    },
+    {
+      "file": "subject_024_shoulder_good_front.mp4",
+      "label": "correct",
+      "status": "correct",
+      "counts": {
+        "verde": 10,
+        "rojo": 0,
+        "amarillo": 1
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 11,
+        "complete_cycles": 10,
+        "assessed_complete_cycles": 10,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 1,
+        "assessed_fraction": 1.0,
+        "passing_cycles": 10,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Oclusión durante la repetición.": 1
+      }
+    },
+    {
+      "file": "subject_024_shoulder_good_side.mp4",
+      "label": "correct",
+      "status": "unreadable",
+      "counts": {
+        "verde": 0,
+        "rojo": 0,
+        "amarillo": 0
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 0,
+        "complete_cycles": 0,
+        "assessed_complete_cycles": 0,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 0,
+        "assessed_fraction": 0.0,
+        "passing_cycles": 0,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {}
+    },
+    {
+      "file": "subject_026_shoulder_bad_diagonal.mp4",
+      "label": "incorrect",
+      "status": "unreadable",
+      "counts": {
+        "verde": 7,
+        "rojo": 0,
+        "amarillo": 10
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 17,
+        "complete_cycles": 10,
+        "assessed_complete_cycles": 7,
+        "unassessed_complete_cycles": 3,
+        "incomplete_cycles": 7,
+        "assessed_fraction": 0.7,
+        "passing_cycles": 7,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 4,
+        "Faltan medidas fiables en retorno.": 1,
+        "Faltan medidas fiables en inicio.": 1,
+        "Oclusión durante la repetición.": 3,
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 1
+      }
+    },
+    {
+      "file": "subject_026_shoulder_bad_front.mp4",
+      "label": "incorrect",
+      "status": "correct",
+      "counts": {
+        "verde": 15,
+        "rojo": 0,
+        "amarillo": 1
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 16,
+        "complete_cycles": 15,
+        "assessed_complete_cycles": 15,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 1,
+        "assessed_fraction": 1.0,
+        "passing_cycles": 15,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta observar el retorno.": 1
+      }
+    },
+    {
+      "file": "subject_026_shoulder_bad_side.mp4",
+      "label": "incorrect",
+      "status": "unreadable",
+      "counts": {
+        "verde": 0,
+        "rojo": 0,
+        "amarillo": 14
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 14,
+        "complete_cycles": 0,
+        "assessed_complete_cycles": 0,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 14,
+        "assessed_fraction": 0.0,
+        "passing_cycles": 0,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Falta el inicio completo.": 5,
+        "Oclusión durante la repetición.": 9
+      }
+    },
+    {
+      "file": "subject_026_shoulder_good_diagonal.mp4",
+      "label": "correct",
+      "status": "correct",
+      "counts": {
+        "verde": 10,
+        "rojo": 0,
+        "amarillo": 2
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 12,
+        "complete_cycles": 10,
+        "assessed_complete_cycles": 10,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 2,
+        "assessed_fraction": 1.0,
+        "passing_cycles": 10,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Oclusión durante la repetición.": 2
+      }
+    },
+    {
+      "file": "subject_026_shoulder_good_front.mp4",
+      "label": "correct",
+      "status": "correct",
+      "counts": {
+        "verde": 9,
+        "rojo": 0,
+        "amarillo": 0
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 9,
+        "complete_cycles": 9,
+        "assessed_complete_cycles": 9,
+        "unassessed_complete_cycles": 0,
+        "incomplete_cycles": 0,
+        "assessed_fraction": 1.0,
+        "passing_cycles": 9,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {}
+    },
+    {
+      "file": "subject_026_shoulder_good_side.mp4",
+      "label": "correct",
+      "status": "unreadable",
+      "counts": {
+        "verde": 6,
+        "rojo": 0,
+        "amarillo": 3
+      },
+      "error_keys": [],
+      "assessment_summary": {
+        "total_cycles": 9,
+        "complete_cycles": 8,
+        "assessed_complete_cycles": 6,
+        "unassessed_complete_cycles": 2,
+        "incomplete_cycles": 1,
+        "assessed_fraction": 0.75,
+        "passing_cycles": 6,
+        "flagged_cycles": 0,
+        "scope": "Cobertura de lectura y criterios del press; no porcentaje de acierto."
+      },
+      "unassessed_reasons": {
+        "Faltan medidas fiables de hombro, codo, muñeca o tronco en esta repetición.": 1,
+        "Faltan medidas fiables en retorno.": 1,
+        "Oclusión durante la repetición.": 1
+      }
+    }
+  ],
+  "end_to_end": [
+    {
+      "file": "subject_002_shoulder_good_front.mp4",
+      "status": "correct",
+      "counts": {
+        "verde": 11,
+        "rojo": 0,
+        "amarillo": 1
+      },
+      "seconds": 6.466,
+      "output_media": {
+        "programs": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "width": 404,
+            "height": 720
+          }
+        ],
+        "format": {
+          "duration": "30.666667"
+        }
+      }
+    },
+    {
+      "file": "subject_002_shoulder_bad_front.mp4",
+      "status": "incorrect",
+      "counts": {
+        "verde": 9,
+        "rojo": 9,
+        "amarillo": 0
+      },
+      "seconds": 9.333,
+      "output_media": {
+        "programs": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "width": 404,
+            "height": 720
+          }
+        ],
+        "format": {
+          "duration": "36.466667"
+        }
+      }
+    }
+  ]
+}

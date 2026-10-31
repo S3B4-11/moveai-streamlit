@@ -1,6 +1,6 @@
 """Presenta por separado lo medido en una repetición y el juicio del video."""
-APP_REVISION = '2026.10.26-r9'
-POLICY_VERSION = 'moveai_feedback_v9'
+APP_REVISION = '2026.10.30-r11'
+POLICY_VERSION = 'moveai_feedback_v11'
 
 def repetition_label(rep, result):
     if rep['color'] == 'rojo':

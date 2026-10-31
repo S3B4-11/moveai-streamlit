@@ -75,6 +75,11 @@ class VideoOverlay:
                     or (source=="modelo_rgb" and self.result["color"]=="rojo" and color=="verde")):
             color="amarillo"
         banner_color="rojo" if video_only else color
+        # Los criterios del press resumen fases, no localizan una lesión o
+        # un defecto en cada fotograma. El aviso rojo identifica la repetición;
+        # el esqueleto queda neutro para no señalar como error la flexión normal
+        # del codo durante el descenso.
+        if self.result['exercise']=='shoulder_press' and color=='rojo':color='neutro'
         drawn=0
         if points is not None:
             def bone(a,b,rgb):

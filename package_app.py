@@ -7,7 +7,8 @@ def package(root,destination,include_asset=True):
     root=Path(root).resolve();destination=Path(destination).resolve();destination.parent.mkdir(parents=True,exist_ok=True)
     files=[p for p in root.iterdir() if p.is_file() and p.suffix in [".py",".txt",".md"]]
     files += [root/p for p in [".python-version",".gitignore",".streamlit/config.toml"] if (root/p).exists()]
-    for folder in (["assets"] if include_asset else [])+["camera_modelos"]:
+    files += [root/n for n in ["preservation.json","press_validation.json"] if (root/n).exists()]
+    for folder in (["assets"] if include_asset else [])+["camera_modelos","neural_modelos"]:
         files += [p for p in (root/folder).rglob("*") if p.is_file() and p.suffix in [".task",".json",".npz"]]
     with zipfile.ZipFile(destination,"w",zipfile.ZIP_DEFLATED) as z:
         for p in sorted(set(files)):z.write(p,p.relative_to(root).as_posix())

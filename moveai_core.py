@@ -1,6 +1,8 @@
 """API pública: video, repeticiones y evidencia de cámara."""
 from analysis import analyze
 from pose import extract_video
+from press_analysis import analyze_press
+from press_quality import finalize_press
 try:
     from inference_router import predict
     ROUTER_CONTEXT=True
@@ -30,6 +32,15 @@ def evaluate(path,exercise,side="automatica",target=None,rotation="auto",person_
             x,y=selected
             selected={90:[1-y,x],-90:[y,1-x],180:[1-x,1-y]}[turn]
         sample=extract(analysis_video,selected)
+    if exercise=='shoulder_abduction':
+        raise ValueError('La opción anterior de elevación lateral no representa el press. Selecciona Press de hombros con mancuernas y vuelve a analizar.')
+    if exercise=='shoulder_press':
+        result=analyze_press(sample,side,target)
+        result['model']=dict(available=False,reason='El press usa criterios observables específicos. El clasificador de investigación de press no está aprobado y no aporta probabilidades.')
+        result.update(analysis_video=str(analysis_video),orientation_rotation=turn)
+        result=apply_policy(reading_summary(result))
+        result=finalize_press(result)
+        return result
     result=analyze(sample,exercise,side,target)
     repair_frontal_projection(result)
     if person_target is None:
@@ -46,10 +57,11 @@ def diagnostic(result):
     import math
     import numpy as np
     payload={k:v for k,v in result.items() if k not in ["sample","tracks","analysis_video"]}
-    payload["tracks"]=[{k:v for k,v in t.items() if k not in ["series","cycle_series","valid"]} for t in result["tracks"]]
+    payload["tracks"]=[{k:v for k,v in t.items() if k not in ["series","cycle_series","valid","elbow_series","cycle_valid"]} for t in result["tracks"]]
     def clean(v):
         if isinstance(v,dict):return {k:clean(x) for k,x in v.items()}
         if isinstance(v,(list,tuple)):return [clean(x) for x in v]
+        if isinstance(v,np.ndarray):return clean(v.tolist())
         if isinstance(v,np.generic):return clean(v.item())
         if isinstance(v,float) and not math.isfinite(v):return None
         return v
