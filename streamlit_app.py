@@ -1,5 +1,4 @@
 """MOVEAI: resultado comprensible, por repetición."""
-import hmac
 import json
 import logging
 import hashlib
@@ -14,6 +13,7 @@ from video_overlay import render_video
 from feedback import save_review,export_reviews
 from feedback_presentation import APP_REVISION, POLICY_VERSION, repetition_label, repetition_color, count_labels
 from pose_selection import selection_preview
+from ui_presentation import UI_REVISION, CAPTURE_GUIDES, apply_style, reset_workspace, show_counts
 
 RESULT_LABELS={"verde":"Ejercicio realizado correctamente","rojo":"Ejercicio mal ejecutado","amarillo":"No se pudo evaluar"}
 REP_LABELS={"verde":"Correcta","rojo":"A corregir","amarillo":"Sin evaluar"}
@@ -34,41 +34,35 @@ def result_explanation(result):
     return "La grabación no permite dar un resultado claro. Prueba otro video con el cuerpo visible."
 
 st.set_page_config(page_title="MOVEAI · Tu técnica",page_icon="🏋️",layout="wide")
-try:password=st.secrets.get("app_password","")
-except FileNotFoundError:password=""
-if not isinstance(password,str) or len(password)<8:
-    st.info("Configura app_password en Settings → Secrets, con 8 caracteres o más.");st.stop()
-if not st.session_state.get("authenticated"):
-    st.title("MOVEAI");st.caption("Revisa tu movimiento, repetición por repetición.")
-    with st.form("login"):
-        entered=st.text_input("Contraseña",type="password");sent=st.form_submit_button("Entrar",type="primary")
-    if sent:
-        if hmac.compare_digest(entered.encode(),password.encode()):st.session_state.authenticated=True;st.rerun()
-        else:st.error("Contraseña incorrecta.")
-    st.stop()
+apply_style()
 if "workspace" not in st.session_state:st.session_state.workspace=SessionWorkspace()
 if not hasattr(st.session_state.workspace,"normalized_video"):
     st.session_state.workspace.close();st.session_state.workspace=SessionWorkspace()
 if not getattr(st.session_state.workspace,'supports_person_selection',False):
     st.session_state.workspace=SessionWorkspace.upgrade(st.session_state.workspace)
 workspace=st.session_state.workspace
-if st.session_state.get('_app_revision')!=APP_REVISION:
+if st.session_state.get('_ui_revision')!=UI_REVISION:
     workspace.clear_result()
-    st.session_state['_app_revision']=APP_REVISION
+    st.session_state['_ui_revision']=UI_REVISION
 with st.sidebar:
-    st.title("MOVEAI");st.caption("Revisa tu técnica")
-    st.caption(f"Versión {APP_REVISION}")
-    st.write("Graba el cuerpo y la extremidad activa durante el inicio y el retorno. Hasta 60 segundos.")
-    st.caption("Sentadilla: de frente para revisar rodillas y pies; de lado para revisar el recorrido. Curl: brazo activo visible. Elevación lateral: frontal.")
-    if st.button("Cerrar sesión"):workspace.close();st.session_state.clear();st.rerun()
+    st.title("MOVEAI");st.caption("Tu técnica, paso a paso")
+    st.caption(f"Versión {UI_REVISION}")
+    st.markdown("**Cómo funciona**\n\n1. Elige un ejercicio.\n2. Sube un video completo.\n3. Revisa el resultado y las correcciones.")
+    st.divider()
+    st.button("Nuevo análisis",on_click=reset_workspace,use_container_width=True)
+    st.caption("Limpia el video, los resultados y las revisiones de esta sesión.")
+    st.caption("Evaluación de los movimientos visibles. No es un diagnóstico de lesión.")
 st.title("Revisa tu técnica")
-st.write("Sube tu video y revisa el resultado de cada repetición.")
+st.write("Sube un video de tu ejercicio y descubre qué aspectos puedes mejorar.")
 controls,output=st.columns([1,1.5],gap="large")
 with controls:
+    st.subheader("1. Prepara tu video")
     exercise=st.selectbox("Ejercicio",list(EXERCISES),format_func=EXERCISES.get)
-    upload=st.file_uploader("Video",type=["mp4","mov","avi","webm","m4v"])
+    st.info(CAPTURE_GUIDES[exercise])
+    st.caption("Hasta 60 segundos · Máximo 150 MB · Incluye el inicio, la subida y el retorno.")
+    upload=st.file_uploader("Video",type=["mp4","mov","avi","webm","m4v"],key="video_upload_"+str(st.session_state.get("upload_generation",0)))
     uploaded_data=upload.getvalue() if upload else None
-    video_key='r8_'+(hashlib.sha256(uploaded_data).hexdigest()[:16] if uploaded_data else 'empty')+'_'+exercise
+    video_key='public12_'+(hashlib.sha256(uploaded_data).hexdigest()[:16] if uploaded_data else 'empty')+'_'+exercise
     with st.expander("Ajustar ejercicio y toma"):
         target=st.slider("Recorrido objetivo (grados)",40,170,TARGETS[exercise],5,key=video_key+'_target')
         side=st.selectbox("Extremidad",["automatica","izquierda","derecha"],format_func=lambda x:"Automática: lados activos" if x=="automatica" else x.capitalize()+" de la persona",key=video_key+'_side')
@@ -87,6 +81,7 @@ with controls:
     if workspace.video and person_target is not None:
         selection=selection_preview(workspace.video,person_target)
         if selection is not None:st.image(selection,caption='Marca de la persona seleccionada',use_container_width=True)
+    st.subheader("2. Analiza el movimiento")
     if st.button("Analizar video",type="primary",disabled=workspace.video is None,use_container_width=True):
         workspace.clear_result()
         with st.spinner("Analizando tu técnica…"):
@@ -108,12 +103,19 @@ with controls:
                     logging.exception("MOVEAI RGB: video anotado")
                     workspace.render_error="No se pudo preparar el video anotado. El resultado del análisis sigue disponible."
 with output:
+    st.subheader("3. Revisa tu resultado")
     result=workspace.result
-    if not result:st.info("Tu resultado aparecerá aquí.")
+    if not result:
+        st.info("Tu resultado aparecerá aquí.")
+        st.markdown("**Qué verás después del análisis**\n\nEl resultado del video, las correcciones detectadas y el detalle de cada repetición.")
+        st.caption("Si la toma no permite medir el movimiento, te pediremos otra grabación.")
     else:
         {"verde":st.success,"rojo":st.error,"amarillo":st.warning}[result["color"]](result["title"] if result.get("feedback_version") else RESULT_LABELS[result["color"]])
         st.write(result_explanation(result))
         if result["color"]=="rojo":st.write("Pide a un profesional que revise tu técnica.")
+        show_counts(result)
+        if result["color"]=="amarillo":
+            st.info("Para mejorar la lectura: "+CAPTURE_GUIDES[exercise]+" Graba al menos una repetición completa, con la cámara fija y buena iluminación.")
         reported=set()
         for error in result.get("errors",[]):
             identity=(error["key"],error["name"])
@@ -143,8 +145,6 @@ with output:
                 for x in rep["checks"]:
                     if x["status"] in ["fuera_de_rango","limite"]:st.write("• "+x["advice"])
         with st.expander("Ver detalles del análisis"):
-            labels=count_labels(result)
-            a,b,c=st.columns(3);a.metric(labels[0],result['counts']['verde']);b.metric(labels[1],result['counts']['rojo']);c.metric(labels[2],result['counts']['amarillo'])
             st.caption('Los contadores describen criterios por repetición. El clasificador califica el video completo.')
             for observation in result.get('posture_observations',[]):
                 names='; '.join(c['name']+(' · a corregir' if c['status']=='fuera_de_rango' else ' · sin fallo medido') for c in observation['checks'])
