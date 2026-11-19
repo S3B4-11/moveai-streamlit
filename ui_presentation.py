@@ -2,7 +2,7 @@
 import streamlit as st
 from feedback_presentation import count_labels
 
-UI_REVISION = "2026.11.03-r12-publica"
+UI_REVISION = "2026.11.18-r13-temas"
 CAPTURE_GUIDES = {
     "squat": "Sentadilla: graba de lado para revisar el recorrido; de frente para observar rodillas y pies. Incluye el cuerpo completo.",
     "elbow_flexion": "Curl de bíceps: graba de lado o en diagonal, con el hombro, el codo, la muñeca y la cadera del brazo activo visibles.",
@@ -32,6 +32,14 @@ def apply_style():
     [data-testid="stMetric"] { border: 1px solid rgba(148,163,184,.28); border-radius: 12px; padding: .8rem; }
     [data-testid="stFileUploader"] { border: 1px dashed rgba(148,163,184,.5); border-radius: 12px; padding: .6rem; }
     div.stButton > button, div.stDownloadButton > button { border-radius: 10px; min-height: 44px; }
+    /* Solo cambia la presentación del reproductor analizado. */
+    .st-key-analysis_video_player {
+      width: 100%; max-width: 320px; margin-left: auto; margin-right: auto;
+    }
+    .st-key-analysis_video_player video {
+      display: block; width: 100% !important; height: auto !important;
+      max-height: 420px; object-fit: contain; background-color: #000;
+    }
     @media (max-width: 700px) {
       .block-container { padding: 1.2rem 1rem 2rem; }
       [data-testid="stHorizontalBlock"] { flex-wrap: wrap; gap: 1rem; }

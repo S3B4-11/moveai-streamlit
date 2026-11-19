@@ -47,6 +47,7 @@ if st.session_state.get('_ui_revision')!=UI_REVISION:
 with st.sidebar:
     st.title("MOVEAI");st.caption("Tu técnica, paso a paso")
     st.caption(f"Versión {UI_REVISION}")
+    st.caption("Tema claro u oscuro: menú ⋮ → Settings → Theme.")
     st.markdown("**Cómo funciona**\n\n1. Elige un ejercicio.\n2. Sube un video completo.\n3. Revisa el resultado y las correcciones.")
     st.divider()
     st.button("Nuevo análisis",on_click=reset_workspace,use_container_width=True)
@@ -126,7 +127,8 @@ with output:
             st.write("**Qué puede provocar:** "+error["consequence"])
             if error.get('scope')=='postura':st.caption(f"Postura observada entre {error['start_time']:.1f} y {error['end_time']:.1f} s; no se cuenta como una repetición.")
         if workspace.rendered_video and workspace.rendered_video.exists():
-            st.video(str(workspace.rendered_video))
+            with st.container(key="analysis_video_player"):
+                st.video(str(workspace.rendered_video))
             st.caption("Verde: correcta · Rojo: a corregir · Gris: sin fallo localizado · Amarillo: tramo sin evaluar.")
             st.download_button("Descargar video analizado",workspace.rendered_video.read_bytes(),file_name="moveai_video_analizado.mp4",mime="video/mp4",on_click="ignore")
         elif workspace.render_error:st.info(workspace.render_error)
