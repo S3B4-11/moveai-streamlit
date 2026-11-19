@@ -78,7 +78,8 @@ with controls:
             person_target=[px/100.,py/100.]
     try:workspace.set_input(uploaded_data,Path(upload.name).suffix if upload else ".mp4",exercise,side,target,rotation,person_target)
     except ValueError as error:st.error(str(error))
-    if upload:st.video(upload)
+    video_original = st.empty()  if upload and workspace.result is None:     
+    video_original.video(upload)
     if workspace.video and person_target is not None:
         selection=selection_preview(workspace.video,person_target)
         if selection is not None:st.image(selection,caption='Marca de la persona seleccionada',use_container_width=True)
