@@ -98,7 +98,9 @@ with controls:
             except Exception:
                 logging.exception("MOVEAI RGB: evaluación")
                 st.error("No se pudo procesar el video. Revisa los registros de la app.")
-        if workspace.result:
+                if workspace.result:
+            video_original.empty()
+
             with st.spinner("Preparando tu video con el análisis…"):
                 try:workspace.rendered_video=render_video(workspace.result.get("analysis_video",workspace.video),workspace.result,workspace.root/"analizado.mp4")
                 except Exception:
