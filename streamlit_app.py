@@ -78,8 +78,7 @@ with controls:
             person_target=[px/100.,py/100.]
     try:workspace.set_input(uploaded_data,Path(upload.name).suffix if upload else ".mp4",exercise,side,target,rotation,person_target)
     except ValueError as error:st.error(str(error))
-    video_original = st.empty()  if upload and workspace.result is None:     
-    video_original.video(upload)
+    video_original = st.empty()
     if workspace.video and person_target is not None:
         selection=selection_preview(workspace.video,person_target)
         if selection is not None:st.image(selection,caption='Marca de la persona seleccionada',use_container_width=True)
@@ -98,14 +97,15 @@ with controls:
             except Exception:
                 logging.exception("MOVEAI RGB: evaluación")
                 st.error("No se pudo procesar el video. Revisa los registros de la app.")
-                if workspace.result:
-            video_original.empty()
-
+        if workspace.result:
             with st.spinner("Preparando tu video con el análisis…"):
                 try:workspace.rendered_video=render_video(workspace.result.get("analysis_video",workspace.video),workspace.result,workspace.root/"analizado.mp4")
                 except Exception:
                     logging.exception("MOVEAI RGB: video anotado")
                     workspace.render_error="No se pudo preparar el video anotado. El resultado del análisis sigue disponible."
+    if upload and workspace.result is None:
+        video_original.video(upload)
+
 with output:
     st.subheader("3. Revisa tu resultado")
     result=workspace.result
