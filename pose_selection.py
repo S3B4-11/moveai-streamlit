@@ -90,6 +90,9 @@ def selection_preview(path,target):
     import cv2
     target=validate_target(target);cap=cv2.VideoCapture(str(path))
     try:
+        # OpenCV 4.11 desactiva esto por defecto: la marca debe coincidir
+        # con la imagen vertical que presenta el navegador.
+        cap.set(cv2.CAP_PROP_ORIENTATION_AUTO,1)
         fps=cap.get(cv2.CAP_PROP_FPS);frames=cap.get(cv2.CAP_PROP_FRAME_COUNT)
         cap.set(cv2.CAP_PROP_POS_MSEC,1000*min(3.,frames/max(fps,1)/4))
         ok,frame=cap.read()

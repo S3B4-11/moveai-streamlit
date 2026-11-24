@@ -10,7 +10,7 @@ except ImportError:
 from squat_alignment import add_alignment
 from decision_policy import apply_policy
 from repetition_quality import repair_repetition_quality
-from video_orientation import inferred_rotation,rotate_video
+from video_orientation import prepare_video
 from frontal_quality import repair_frontal_projection,predict_resolved_frontal
 from posture_review import add_posture_observations,reading_summary
 from pose_selection import extract_selected_video,validate_target
@@ -19,17 +19,24 @@ def evaluate(path,exercise,side="automatica",target=None,rotation="auto",person_
     person_target=validate_target(person_target).tolist() if person_target is not None else None
     def extract(video,selection):
         return extract_video(video) if selection is None else extract_selected_video(video,selection)
-    sample=extract(path,person_target)
-    turn=inferred_rotation(sample) if rotation=="auto" else int(rotation)
-    if turn not in (0,90,-90,180):raise ValueError("Orientación de video inválida.")
-    analysis_video=path
-    if turn:
-        analysis_video=rotate_video(path,turn)
-        selected=person_target
-        if selected is not None:
-            x,y=selected
-            selected={90:[1-y,x],-90:[y,1-x],180:[1-x,1-y]}[turn]
-        sample=extract(analysis_video,selected)
+    # El navegador ya presenta el video según su matriz de orientación.
+    # Se prepara esa misma imagen ANTES de ejecutar MediaPipe.
+    analysis_video,orientation=prepare_video(path,rotation)
+    manual=orientation['manual_rotation']
+    turn=(orientation['metadata_rotation']+manual+180)%360-180
+    selected=person_target
+    if selected is not None and manual:
+        x,y=selected
+        selected={90:[1-y,x],-90:[y,1-x],180:[1-x,1-y]}[manual]
+    try:
+        return _evaluate_prepared(analysis_video,exercise,side,target,selected,person_target,
+                                  orientation,turn,extract)
+    except Exception:
+        if orientation['normalized']:analysis_video.unlink(missing_ok=True)
+        raise
+
+def _evaluate_prepared(analysis_video,exercise,side,target,selected,person_target,orientation,turn,extract):
+    sample=extract(analysis_video,selected)
     result=analyze(sample,exercise,side,target)
     repair_frontal_projection(result)
     if person_target is None:
@@ -39,7 +46,8 @@ def evaluate(path,exercise,side="automatica",target=None,rotation="auto",person_
         model=dict(available=False,reason='Se revisan criterios visibles de la persona seleccionada. El clasificador global todavía no está validado para este modo de seguimiento.')
         result['sample']['trainable']=False
     result["model"]=model
-    result.update(analysis_video=str(analysis_video),orientation_rotation=turn)
+    result.update(analysis_video=str(analysis_video),orientation_rotation=turn,
+                  video_orientation=orientation)
     return apply_policy(reading_summary(add_posture_observations(add_alignment(repair_repetition_quality(result)))))
 
 def diagnostic(result):

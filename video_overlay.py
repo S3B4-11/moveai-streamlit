@@ -125,6 +125,9 @@ def render_video(source,result,destination):
     destination.parent.mkdir(parents=True,exist_ok=True)
     cap=cv2.VideoCapture(str(source));writer=None
     try:
+        # También respeta metadatos si se invoca el exportador directamente.
+        # Los videos preparados por evaluate ya no contienen rotación.
+        cap.set(cv2.CAP_PROP_ORIENTATION_AUTO,1)
         fps=float(cap.get(cv2.CAP_PROP_FPS));frames=int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
         if not cap.isOpened() or not np.isfinite(fps) or fps<=0 or frames<1 or frames/fps>60.5:
             raise ValueError("No se pudo leer un video de hasta 60 segundos.")
