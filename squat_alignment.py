@@ -75,7 +75,14 @@ def alignment_checks(sample,start,end):
                    baseline_available=baseline is not None,observed_fraction=float(np.mean(valid[sl])))
         if np.mean(valid[sl])<.8 or phase[sl].sum()<minimum:
             output.append(check);continue
-        inward=phase&(delta < -threshold)&(deviation < -absolute)&(inside>.06)&(gap<-25)&((gap-baseline_gap)<-12)
+        # La proyección de talón-punta está en el plano del suelo, mientras
+        # que la tibia se proyecta en vertical. Restar sus ángulos no es una
+        # comprobación independiente de valgo y puede invertir el signo.
+        # Con referencia erguida se comprueba el desplazamiento medial proyectado
+        # respecto a cadera-tobillo y al corredor visible del apoyo del pie.
+        # Sin esa referencia se conserva el criterio anterior más estricto.
+        medial_position=phase&(delta < -threshold)&(deviation < -absolute)&(inside>.06)
+        inward=medial_position if baseline is not None else medial_position&(gap<-25)&((gap-baseline_gap)<-12)
         outward=phase&(delta > threshold)&(deviation > absolute)&(outside>.06)&(gap>25)&((gap-baseline_gap)>12)
         inward_run=longest_run(inward[sl]);outward_run=longest_run(outward[sl])
         direction='hacia_dentro' if inward_run>=minimum and inward_run>=outward_run else 'hacia_fuera' if outward_run>=minimum else None
