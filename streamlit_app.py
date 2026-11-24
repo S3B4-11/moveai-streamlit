@@ -33,7 +33,7 @@ def result_explanation(result):
         return "Hay una repetición incompleta. Puedes ver abajo el resultado de las demás."
     return "La grabación no permite dar un resultado claro. Prueba otro video con el cuerpo visible."
 
-st.set_page_config(page_title="MOVEAI · Tu técnica",page_icon="🏋️",layout="wide")
+st.set_page_config(page_title="MOVEAI",page_icon=str(Path(__file__).resolve().parent/"moveai_icon.png"),layout="wide")
 apply_style()
 if "workspace" not in st.session_state:st.session_state.workspace=SessionWorkspace()
 if not hasattr(st.session_state.workspace,"normalized_video"):
